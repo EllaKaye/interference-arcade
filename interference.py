@@ -30,14 +30,11 @@ HORIZONTAL_MARGIN_PERCENT = 0.10
 START_X = CARD_WIDTH / 2 + CARD_WIDTH * HORIZONTAL_MARGIN_PERCENT
 
 # The Y values for the bottom of the four rows
-# Come back to calculate properly later
-ROW_0_Y = 470
-ROW_1_Y = 320
-ROW_2_Y = 170
-ROW_3_Y = 20
+BOTTOM_Y = CARD_WIDTH / 2 + CARD_WIDTH * HORIZONTAL_MARGIN_PERCENT
 
 # Card constants
 CARD_VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+GAME_VALUES = ["Blank", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 CARD_SUITS = ["Clubs", "Hearts", "Spades", "Diamonds"]
 # Not needed for game, but makes printing for debigging nicer
 SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamonds": "♦️"}
@@ -46,7 +43,7 @@ VALUES_INT = {"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9
 class Card(arcade.Sprite):
     """Card sprite"""
 
-    def __init__(self, value, suit, scale = 1):
+    def __init__(self, suit, value, scale = 1):
         """Card constructor"""
     
         # Attributes
@@ -72,6 +69,9 @@ class Row(arcade.SpriteList):
         super().__init__() # initialise the parent class
         self.extend(cards) # add the given cards to the row
 
+    def __str__(self):
+        return " ".join(str(card) for card in self)
+
 class MyGame(arcade.Window):
     """Main application class"""
 
@@ -88,24 +88,49 @@ class MyGame(arcade.Window):
         self.blank_card = None # where we try to move the card (should be a blank)
         self.test_card = None # the card before the blank card, to check logic for valid move
 
-        # sprite lists for each row
-        self.row_0 = None  
-        self.row_1 = None
-        self.row_2 = None
-        self.row_3 = None
-
         # list of lists (one for each row)
         self.rows = None
 
     def setup(self):
         """Seup up game here. Call this function to restart"""
-        pass
+        
+        # create the deck as a SpriteList, and fill with cards
+        # N.B. assign positions later, once they're in rows
+        self.deck = arcade.SpriteList()
+        for card_suit in CARD_SUITS:
+            for card_value in CARD_VALUES:
+                card = Card(card_suit, card_value, CARD_SCALE)
+                self.deck.append(card)
+
+        # shuffle the deck
+        self.shuffle(self.deck)
+
+        # split the deck into four
+        self.deck_rows = [self.deck[i*13:(i+1)*13] for i in range(4)]
+
+        # Assign these to Row class
+        rows = [Row(self.deck_rows[i]) for i in range(4)]
+        
+        for row in rows:
+            print(row)
+
+
+    def shuffle(self, cards: arcade.SpriteList):
+        """Shuffle a SpriteList of cards"""
+        for pos1 in range(len(cards)):
+            pos2 = random.randrange(len(cards))
+            cards.swap(pos1, pos2)
+
+    def on_draw(self):
+        self.clear()
+    
 
 def main():
-    NineD = Card("9", "Diamonds")
-    JackS = Card("J", "Spades")
-    print(NineD)
-    print(JackS)
+    window = MyGame()
+    window.setup()
+    #arcade.run()
+    #NineD = Card("9", "Diamonds")
+    #print(NineD)
 
 if __name__ == "__main__":
     main()
