@@ -105,11 +105,9 @@ class MyGame(arcade.Window):
         # shuffle the deck
         self.shuffle(self.deck)
 
-        # split the deck into four
-        self.deck_rows = [self.deck[i*13:(i+1)*13] for i in range(4)]
-
-        # Assign these to Row class
-        rows = [Row(self.deck_rows[i]) for i in range(4)]
+        # split the deck into four lists (the `in` clause) 
+        # then assign these to Row class 
+        rows = [Row(row) for row in [self.deck[i*13:(i+1)*13] for i in range(4)]]
         
         for row in rows:
             print(row)
