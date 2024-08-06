@@ -67,15 +67,15 @@ class Card(arcade.Sprite):
         # Call the parent
         super().__init__(self.image_file_name, scale, hit_box_algorithm="None")
 
-    def draw(self):
-        """Draw the card if it's not an Ace"""
-        if self.value not in ["A", "Blank"]:
-            super().draw()
+    # def draw(self):
+    #    """Draw the card if it's not an Ace"""
+    #    if self.value not in ["A", "Blank"]:
+    #        super().draw()
 
-    # def set_visibility(self):
-    #    """Set visibility for the card"""
-    #    if self.value in ["A", "Blank"]:
-    #        self.visible = False
+    def set_visibility(self):
+        """Set visibility for the card"""
+        if self.value in ["A", "Blank"]:
+            self.visible = False
 
     def __str__(self):
         if (self.value == "Blank"):
@@ -96,13 +96,13 @@ class Row(arcade.SpriteList):
     def __str__(self):
         return " ".join(str(card) for card in self)
 
-    def draw(self):
-        """
-        Draw the cards in the row, skipping Aces/Blanks
-        Makes use of custom draw method for Card
-        """
-        for card in self:
-            card.draw()
+    # def draw(self):
+    #    """
+    #    Draw the cards in the row, skipping Aces/Blanks
+    #    Makes use of custom draw method for Card
+    #    """
+    #    for card in self:
+    #        card.draw()
 
     def is_stuck(self):
         """A Row is stuck if all Blanks are after Kings"""
@@ -156,6 +156,7 @@ class MyGame(arcade.Window):
         for card_suit in CARD_SUITS:
             for card_value in CARD_VALUES:
                 card = Card(card_suit, card_value, CARD_SCALE)
+                card.set_visibility()
                 self.deck.append(card)
 
         # replace Aces with Blanks
