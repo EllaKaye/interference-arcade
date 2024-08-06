@@ -9,11 +9,6 @@ There numbers are well understood in the context of a deck of cards,
 so I feel it's acceptable to use them hard-coded.
 """
 
-# Screen title and size
-SCREEN_WIDTH = 1024
-SCREEN_HEIGHT = 768
-SCREEN_TITLE = "Interference"
-
 # Constants for sizing
 CARD_SCALE = 0.6
 
@@ -23,14 +18,23 @@ CARD_HEIGHT = 190 * CARD_SCALE
 
 # How much space do we leave as a gap between the cards?
 # Done as a percent of the card size.
-VERTICAL_MARGIN_PERCENT = 0.10
-HORIZONTAL_MARGIN_PERCENT = 0.10
+X_MARGIN = 1.1 * CARD_WIDTH
+Y_MARGIN = 1.1 * CARD_HEIGHT
+
+# Gaps between rows and columns
+X_GAP = 0.1 * CARD_WIDTH
+Y_GAP = 0.35 * CARD_HEIGHT
 
 # The X of where to start putting things on the left side
-START_X = CARD_WIDTH / 2 + CARD_WIDTH * HORIZONTAL_MARGIN_PERCENT
+X_START = X_MARGIN + CARD_WIDTH / 2
 
-# The Y values for the bottom of the four rows
-BOTTOM_Y = CARD_WIDTH / 2 + CARD_HEIGHT * VERTICAL_MARGIN_PERCENT
+# The Y values for the bottom (row 0) of the four rows
+Y_START = Y_MARGIN + CARD_HEIGHT / 2 
+
+# Screen title and size
+SCREEN_WIDTH = 2 * X_MARGIN + 13 * CARD_WIDTH + 12 * X_GAP
+SCREEN_HEIGHT = 2 * Y_MARGIN + 4 * CARD_HEIGHT + 3 * Y_GAP
+SCREEN_TITLE = "Interference"
 
 # Card constants
 CARD_VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
@@ -39,6 +43,7 @@ CARD_SUITS = ["Clubs", "Hearts", "Spades", "Diamonds"]
 # Not needed for game, but makes printing for debigging nicer
 SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamonds": "♦️"}
 VALUES_INT = {"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13, "Blank": 0}
+#VALUES_INT = {value: index for index, value in enumerate(CARD_VALUES)}
 
 class Card(arcade.Sprite):
     """Card sprite"""
@@ -50,6 +55,11 @@ class Card(arcade.Sprite):
         self.suit = suit
         self.value = value
         self.value_int = VALUES_INT[self.value]
+        #self.visible = value not in ["Ace", "Blank"]
+
+        # don't show Aces or Blanks
+        #if self.value in ["A", "Blank"]:
+        #    self.visible = False
 
         # Image to use for the sprite
         self.image_file_name = f":resources:images/cards/card{self.suit}{self.value}.png"
@@ -57,6 +67,15 @@ class Card(arcade.Sprite):
         # Call the parent
         super().__init__(self.image_file_name, scale, hit_box_algorithm="None")
 
+    def draw(self):
+        """Draw the card if it's not an Ace"""
+        if self.value not in ["A", "Blank"]:
+            super().draw()
+
+    # def set_visibility(self):
+    #    """Set visibility for the card"""
+    #    if self.value in ["A", "Blank"]:
+    #        self.visible = False
 
     def __str__(self):
         if (self.value == "Blank"):
@@ -76,7 +95,6 @@ class Row(arcade.SpriteList):
 
     def __str__(self):
         return " ".join(str(card) for card in self)
-
 
     def is_stuck(self):
         """A Row is stuck if all Blanks are after Kings"""
@@ -142,10 +160,15 @@ class MyGame(arcade.Window):
 
         # split the deck into four lists (the `in` clause) 
         # then assign these to Row class 
-        rows = [Row(row) for row in [self.deck[i*13:(i+1)*13] for i in range(4)]]
+        self.rows = [Row(row) for row in [self.deck[i*13:(i+1)*13] for i in range(4)]]
         
-        for row in rows:
+        for row in self.rows:
             print(row)
+
+        # give each card a position
+        for i, row in enumerate(self.rows):
+            for j in range(13):
+                row[j].position = X_START + j * (CARD_WIDTH + X_GAP), Y_START + i * (CARD_HEIGHT + Y_GAP)
 
 
     def shuffle(self, cards: arcade.SpriteList):
@@ -157,12 +180,22 @@ class MyGame(arcade.Window):
 
     def on_draw(self):
         self.clear()
+
+        for row in self.rows:
+            for card in row:
+                card.draw()
     
+    def on_mouse_press(self, x, y, button, modifiers):
+        cards = arcade.get_sprites_at_point((x, y), self.deck)
+        if cards:
+            card = cards[0]
+            print(f"Card clicked: {card.value} {card.suit}")
+
 
 def main():
     window = MyGame()
     window.setup()
-    #arcade.run()
+    arcade.run()
     #NineD = Card("9", "Diamonds")
     #print(NineD)
 
