@@ -30,7 +30,7 @@ HORIZONTAL_MARGIN_PERCENT = 0.10
 START_X = CARD_WIDTH / 2 + CARD_WIDTH * HORIZONTAL_MARGIN_PERCENT
 
 # The Y values for the bottom of the four rows
-BOTTOM_Y = CARD_WIDTH / 2 + CARD_WIDTH * HORIZONTAL_MARGIN_PERCENT
+BOTTOM_Y = CARD_WIDTH / 2 + CARD_HEIGHT * VERTICAL_MARGIN_PERCENT
 
 # Card constants
 CARD_VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
@@ -59,7 +59,11 @@ class Card(arcade.Sprite):
 
 
     def __str__(self):
-        return f"{self.value}{SUIT_ICONS[self.suit]}"
+        if (self.value == "Blank"):
+            return "__"
+        elif (self.suit in CARD_SUITS):
+            return f"{self.value}{SUIT_ICONS[self.suit]}"
+
 
 class Row(arcade.SpriteList):
     """A row of cards, which is a SpriteList"""
@@ -85,7 +89,7 @@ class MyGame(arcade.Window):
 
         # cards we need to consider each move
         self.card_1 = None # the first card clicked on
-        self.blank_card = None # where we try to move the card (should be a blank)
+        self.card_2 = None # where we try to move the card (should be a blank)
         self.test_card = None # the card before the blank card, to check logic for valid move
 
         # list of lists (one for each row)
@@ -101,6 +105,11 @@ class MyGame(arcade.Window):
             for card_value in CARD_VALUES:
                 card = Card(card_suit, card_value, CARD_SCALE)
                 self.deck.append(card)
+
+        # replace Aces with Blanks
+        for card in self.deck:
+            if card.value == "A":
+                card.value = "Blank"
 
         # shuffle the deck
         self.shuffle(self.deck)
