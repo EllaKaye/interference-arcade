@@ -96,6 +96,14 @@ class Row(arcade.SpriteList):
     def __str__(self):
         return " ".join(str(card) for card in self)
 
+    def draw(self):
+        """
+        Draw the cards in the row, skipping Aces/Blanks
+        Makes use of custom draw method for Card
+        """
+        for card in self:
+            card.draw()
+
     def is_stuck(self):
         """A Row is stuck if all Blanks are after Kings"""
 
@@ -182,8 +190,8 @@ class MyGame(arcade.Window):
         self.clear()
 
         for row in self.rows:
-            for card in row:
-                card.draw()
+            row.draw()
+
     
     def on_mouse_press(self, x, y, button, modifiers):
         cards = arcade.get_sprites_at_point((x, y), self.deck)
