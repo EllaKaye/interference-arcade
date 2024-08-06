@@ -73,8 +73,29 @@ class Row(arcade.SpriteList):
         super().__init__() # initialise the parent class
         self.extend(cards) # add the given cards to the row
 
+
     def __str__(self):
         return " ".join(str(card) for card in self)
+
+
+    def is_stuck(self):
+        """A Row is stuck if all Blanks are after Kings"""
+
+        last_card_was_K = False
+
+        for card in self:
+            if card.value == "K":
+                last_card_was_K = True
+            elif card.value == "Blank":
+                if not last_card_was_K:
+                    return False # Found a Blank not after a King
+                # if we see a Blank after a K, or another Blank, do nothing
+            else:
+                last_card_was_K = False # reset flag for any other card
+
+        # We have looped over row and found all Blanks after Kings
+        return True
+
 
 class MyGame(arcade.Window):
     """Main application class"""
@@ -82,18 +103,23 @@ class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
+        arcade.set_background_color(arcade.color.AMAZON)
+
         # Sprite list with all cards (regardless of row)
         self.deck = None
 
-        arcade.set_background_color(arcade.color.AMAZON)
-
         # cards we need to consider each move
         self.card_1 = None # the first card clicked on
-        self.card_2 = None # where we try to move the card (should be a blank)
-        self.test_card = None # the card before the blank card, to check logic for valid move
+        self.card_2 = None # where we try to move the card (should be a Blank)
+        self.test_card = None # the card before the Blank card, to check logic for valid move
 
         # list of lists (one for each row)
         self.rows = None
+
+        # Game state
+        self.round = 1 # 3 rounds allowed, always start new game on round 1
+        self.round_over = None # need to allow for (unlikely) case that round is dealt over, so don't set to False in setup
+        self.game_over = False
 
     def setup(self):
         """Seup up game here. Call this function to restart"""
@@ -127,6 +153,7 @@ class MyGame(arcade.Window):
         for pos1 in range(len(cards)):
             pos2 = random.randrange(len(cards))
             cards.swap(pos1, pos2)
+
 
     def on_draw(self):
         self.clear()
