@@ -55,11 +55,6 @@ class Card(arcade.Sprite):
         self.suit = suit
         self.value = value
         self.value_int = VALUES_INT[self.value]
-        #self.visible = value not in ["Ace", "Blank"]
-
-        # don't show Aces or Blanks
-        #if self.value in ["A", "Blank"]:
-        #    self.visible = False
 
         # Image to use for the sprite
         self.image_file_name = f":resources:images/cards/card{self.suit}{self.value}.png"
@@ -67,13 +62,9 @@ class Card(arcade.Sprite):
         # Call the parent
         super().__init__(self.image_file_name, scale, hit_box_algorithm="None")
 
-    # def draw(self):
-    #    """Draw the card if it's not an Ace"""
-    #    if self.value not in ["A", "Blank"]:
-    #        super().draw()
 
     def set_visibility(self):
-        """Set visibility for the card"""
+        """Set visibility for the card. Needs to be called after card initialised in setup"""
         if self.value in ["A", "Blank"]:
             self.visible = False
 
@@ -95,14 +86,6 @@ class Row(arcade.SpriteList):
 
     def __str__(self):
         return " ".join(str(card) for card in self)
-
-    # def draw(self):
-    #    """
-    #    Draw the cards in the row, skipping Aces/Blanks
-    #    Makes use of custom draw method for Card
-    #    """
-    #    for card in self:
-    #        card.draw()
 
     def is_stuck(self):
         """A Row is stuck if all Blanks are after Kings"""
@@ -152,6 +135,8 @@ class MyGame(arcade.Window):
         
         # create the deck as a SpriteList, and fill with cards
         # N.B. assign positions later, once they're in rows
+        # need to create Aces and assign them images, then swap to Blank,
+        # otherwise they don't get a hitbox
         self.deck = arcade.SpriteList()
         for card_suit in CARD_SUITS:
             for card_value in CARD_VALUES:
@@ -174,7 +159,11 @@ class MyGame(arcade.Window):
         for row in self.rows:
             print(row)
 
-        # give each card a position
+        # check for (extremely unlikely case) that deal results in round over
+        # set the value, in either case
+        self.round_over = all(row.is_stuck() for row in self.rows)
+
+        # give each card a position, so it can be drawn
         for i, row in enumerate(self.rows):
             for j in range(13):
                 row[j].position = X_START + j * (CARD_WIDTH + X_GAP), Y_START + i * (CARD_HEIGHT + Y_GAP)
@@ -182,6 +171,7 @@ class MyGame(arcade.Window):
 
     def shuffle(self, cards: arcade.SpriteList):
         """Shuffle a SpriteList of cards"""
+        # random.shuffle doesn't work on a SpriteList, so need a custom method
         for pos1 in range(len(cards)):
             pos2 = random.randrange(len(cards))
             cards.swap(pos1, pos2)
