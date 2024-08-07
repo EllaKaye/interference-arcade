@@ -205,6 +205,8 @@ class MyGame(arcade.Window):
             self.card_1.scale += X_GAP_PCT
             print(f"New card 1: {self.card_1}")
 
+        # TODO: logic for selecting card_2, test_card, checking validity of move and swapping if valid
+
 
 def main():
     window = MyGame()
