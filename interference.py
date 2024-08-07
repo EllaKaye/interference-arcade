@@ -186,16 +186,24 @@ class MyGame(arcade.Window):
 
     
     def on_mouse_press(self, x, y, button, modifiers):
-        # Get card clicked on
-        cards = arcade.get_sprites_at_point((x, y), self.deck)
-        if cards:
-            last_card = cards[-1]
-        else:
-            last_card = None
-        if last_card and last_card.value != "Blank" and not self.card_1:
-            self.card_1 = cards[-1]
+
+        card = None
+
+        card_list = arcade.get_sprites_at_point((x, y), self.deck)
+        # if we clicked on a card, extract the card from the list
+        if card_list:
+            card = card_list[0]
+            print(f"Card: {card}") 
+        
+        if card and card.value != "Blank" and not self.card_1:
+            self.card_1 = card
             self.card_1.scale += X_GAP_PCT
             print(f"Card 1: {self.card_1}")
+        elif card and card.value != "Blank" and self.card_1:
+            self.card_1.scale -= X_GAP_PCT
+            self.card_1 = card
+            self.card_1.scale += X_GAP_PCT
+            print(f"New card 1: {self.card_1}")
 
 
 def main():
