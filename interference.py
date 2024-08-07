@@ -18,8 +18,8 @@ CARD_HEIGHT = 190 * CARD_SCALE
 
 # How much space do we leave as a gap between the cards?
 # Done as a percent of the card size.
-X_MARGIN = 1.1 * CARD_WIDTH
-Y_MARGIN = 1.1 * CARD_HEIGHT
+X_MARGIN = CARD_WIDTH
+Y_MARGIN = CARD_WIDTH
 
 # Gaps between rows and columns
 X_GAP = 0.1 * CARD_WIDTH
