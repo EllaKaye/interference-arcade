@@ -22,7 +22,8 @@ X_MARGIN = CARD_WIDTH
 Y_MARGIN = CARD_WIDTH
 
 # Gaps between rows and columns
-X_GAP = 0.1 * CARD_WIDTH
+X_GAP_PCT = 0.1
+X_GAP = X_GAP_PCT * CARD_WIDTH
 Y_GAP = 0.35 * CARD_HEIGHT
 
 # The X of where to start putting things on the left side
@@ -185,10 +186,16 @@ class MyGame(arcade.Window):
 
     
     def on_mouse_press(self, x, y, button, modifiers):
+        # Get card clicked on
         cards = arcade.get_sprites_at_point((x, y), self.deck)
         if cards:
-            card = cards[0]
-            print(f"Card clicked: {card}")
+            last_card = cards[-1]
+        else:
+            last_card = None
+        if last_card and last_card.value != "Blank" and not self.card_1:
+            self.card_1 = cards[-1]
+            self.card_1.scale += X_GAP_PCT
+            print(f"Card 1: {self.card_1}")
 
 
 def main():
