@@ -206,7 +206,7 @@ class MyGame(arcade.Window):
         if card and card.value != "Blank" and not self.card_1 and not self.card_2:
             self.card_1 = card
             self.card_1.scale += X_GAP_PCT
-            print(f"Card 1: {self.card_1}")
+            print(f"Card 1: {self.card_1} at position {self.card_1.position}")
         
         # if card_1 selected and click on card, change card_1
         elif card and card.value != "Blank" and self.card_1 and not self.card_2:
@@ -215,14 +215,37 @@ class MyGame(arcade.Window):
             self.card_1.scale += X_GAP_PCT
             print(f"New card 1: {self.card_1}")
 
-        # if card_1 selected and click on card, set card_2
+        # if card_1 selected and click on Blank, set card_2
         elif card and card.value == "Blank" and self.card_1 and not self.card_2:
             self.card_2 = card
             print(f"Card 2: {self.card_2}")
 
-            # get row and index of card_2
+            # get row and index of card_1 and card_2
+            card_1_row, card_1_index = self.get_card_indices(self.card_1)
             card_2_row, card_2_index = self.get_card_indices(self.card_2)
             print(f"card_2 is in row {card_2_row}, index {card_2_index}")
+
+            # if card_2 is at start of line, swap immediately (no logic to test)
+            if card_2_index == 0:
+                self.card_1.scale -= X_GAP_PCT # reset card_1 size
+
+                # temporarily remove the sprites from their positions
+                # since can't have two of the same sprites in a SpriteList, 
+                # so a direct swap doesn't work
+                self.rows[card_1_row].pop(card_1_index)
+                self.rows[card_2_row].pop(card_2_index)
+
+                # Insert the sprites into their new positions
+                self.rows[card_2_row].insert(card_2_index, self.card_1)
+                self.rows[card_1_row].insert(card_1_index, self.card_2)
+
+                # TODO: update the positions of card_1 and card_2, so that they appear to move in the game window
+                # Can save out positions earlier, e.g. pos_1 = self.card_1.position, pos_2 = self.card_2.position
+                # then assign those after the swap.
+
+                #for row in self.rows:
+                #    print(row)
+                #    row.draw()
 
             # get row and index of test_card (if one exists, i.e. card_2 not at beginning of row)
 
