@@ -198,7 +198,7 @@ class MyGame(arcade.Window):
         cards = arcade.get_sprites_at_point((x, y), self.deck)
         if cards:
             card = cards[0]
-            print(f"Card clicked: {card.value} {card.suit}")
+            print(f"Card clicked: {card}")
 
 
 def main():
