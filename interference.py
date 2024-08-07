@@ -195,17 +195,39 @@ class MyGame(arcade.Window):
             card = card_list[0]
             print(f"Card: {card}") 
         
-        if card and card.value != "Blank" and not self.card_1:
+        # if no cards selected and click on card, set card_1
+        if card and card.value != "Blank" and not self.card_1 and not self.card_2:
             self.card_1 = card
             self.card_1.scale += X_GAP_PCT
             print(f"Card 1: {self.card_1}")
-        elif card and card.value != "Blank" and self.card_1:
+        
+        # if card_1 selected and click on card, change card_1
+        elif card and card.value != "Blank" and self.card_1 and not self.card_2:
             self.card_1.scale -= X_GAP_PCT
             self.card_1 = card
             self.card_1.scale += X_GAP_PCT
             print(f"New card 1: {self.card_1}")
 
-        # TODO: logic for selecting card_2, test_card, checking validity of move and swapping if valid
+        # if card_1 selected and click on card, set card_2
+        elif card and card.value == "Blank" and self.card_1 and not self.card_2:
+            self.card_2 = card
+            print(f"Card 2: {self.card_2}")
+
+            # get row and index of card_2
+
+            # get row and index of test_card (if one exists, i.e. card_2 not at beginning of row)
+
+                # get test_card
+            
+                # check if move is valid
+
+                    # if valid:
+
+                        # swap card_1 and card_2 in rows list
+
+                        # swap position of card_1 and card_2 in the window (and reset card_1 size)
+
+                        # reset card_1 and card_2 to None
 
 
 def main():
