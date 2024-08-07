@@ -221,8 +221,8 @@ class MyGame(arcade.Window):
             print(f"Card 2: {self.card_2}")
 
             # get row and index of card_2
-            row, index = self.get_card_indices(card)
-            print(f"card_2 is in row {row}, index {index}")
+            card_2_row, card_2_index = self.get_card_indices(self.card_2)
+            print(f"card_2 is in row {card_2_row}, index {card_2_index}")
 
             # get row and index of test_card (if one exists, i.e. card_2 not at beginning of row)
 
