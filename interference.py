@@ -46,6 +46,25 @@ SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamon
 VALUES_INT = {"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13, "Blank": 0}
 #VALUES_INT = {value: index for index, value in enumerate(CARD_VALUES)}
 
+class Deck(arcade.SpriteList):
+    "Deck spritelist. Will contain cards"
+    
+    def __init__(self):
+        """Deck constructor"""
+        # will add cards later
+        super().__init__() # initialise the parent class
+        
+    def shuffle(self):
+        """Shuffle a SpriteList of cards"""
+        # random.shuffle doesn't work on a SpriteList, so need a custom method
+        for pos1 in range(len(self)):
+            pos2 = random.randrange(len(self))
+            self.swap(pos1, pos2)
+
+
+    def __str__(self):
+        return " ".join(str(card) for card in self)
+
 class Card(arcade.Sprite):
     """Card sprite"""
 
@@ -138,7 +157,8 @@ class MyGame(arcade.Window):
         # N.B. assign positions later, once they're in rows
         # need to create Aces and assign them images, then swap to Blank,
         # otherwise they don't get a hitbox
-        self.deck = arcade.SpriteList()
+        #self.deck = arcade.SpriteList()
+        self.deck = Deck()
         for card_suit in CARD_SUITS:
             for card_value in CARD_VALUES:
                 card = Card(card_suit, card_value, CARD_SCALE)
@@ -151,14 +171,18 @@ class MyGame(arcade.Window):
                 card.value = "Blank"
 
         # shuffle the deck
-        self.shuffle(self.deck)
+        self.deck.shuffle()
+
 
         # split the deck into four lists (the `in` clause) 
         # then assign these to Row class 
         self.rows = [Row(row) for row in [self.deck[i*13:(i+1)*13] for i in range(4)]]
         
-        for row in self.rows:
+        for row in reversed(self.rows):
             print(row)
+
+        # clear deck, now card are in rows
+        self.deck = Deck()
 
         # check for (extremely unlikely case) that deal results in round over
         # set the value, in either case
@@ -170,12 +194,12 @@ class MyGame(arcade.Window):
                 row[j].position = X_START + j * (CARD_WIDTH + X_GAP), Y_START + i * (CARD_HEIGHT + Y_GAP)
 
 
-    def shuffle(self, cards: arcade.SpriteList):
-        """Shuffle a SpriteList of cards"""
-        # random.shuffle doesn't work on a SpriteList, so need a custom method
-        for pos1 in range(len(cards)):
-            pos2 = random.randrange(len(cards))
-            cards.swap(pos1, pos2)
+    # def shuffle(self, cards: arcade.SpriteList):
+    #    """Shuffle a SpriteList of cards"""
+    #    # random.shuffle doesn't work on a SpriteList, so need a custom method
+    #    for pos1 in range(len(cards)):
+    #        pos2 = random.randrange(len(cards))
+    #        cards.swap(pos1, pos2)
 
     def get_card_indices(self, card):
         """Get the row index, and index within row, for a card in rows"""
@@ -229,6 +253,8 @@ class MyGame(arcade.Window):
             if card_2_index == 0:
                 self.card_1.scale -= X_GAP_PCT # reset card_1 size
 
+                # WOULD BE GOOD TO WRAP SWAPPING INTO A FUNCTION, 
+                # INCLUDING LIST INDICES AND CARD POSITIONS.
                 # temporarily remove the sprites from their positions
                 # since can't have two of the same sprites in a SpriteList, 
                 # so a direct swap doesn't work
