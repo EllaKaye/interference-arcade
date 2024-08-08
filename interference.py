@@ -125,10 +125,10 @@ class Row(arcade.SpriteList):
         # We have looped over row and found all Blanks after Kings
         return True
 
-class Rows():
-    """A list of (four) `Row`s"""
-    def __init__(self):
-         self.rows = [Row() for _ in range(4)]
+#class Rows():
+#    """A list of (four) `Row`s"""
+#    def __init__(self):
+#         self.rows = [Row() for _ in range(4)]
 
     # def __str__(self):
 
@@ -190,7 +190,7 @@ class MyGame(arcade.Window):
             print(row)
 
         # clear deck, now card are in rows
-        self.deck = Deck()
+        # self.deck = Deck()
 
         # check for (extremely unlikely case) that deal results in round over
         # set the value, in either case
@@ -226,6 +226,7 @@ class MyGame(arcade.Window):
     
     def on_mouse_press(self, x, y, button, modifiers):
 
+        print(x, y)
         card = None
 
         card_list = arcade.get_sprites_at_point((x, y), self.deck)
@@ -257,25 +258,34 @@ class MyGame(arcade.Window):
             card_2_row, card_2_index = self.get_card_indices(self.card_2)
             print(f"card_2 is in row {card_2_row}, index {card_2_index}")
 
+            # get positions
+            card_1_pos = self.card_1.position
+            card_2_pos = self.card_2.position
+
             # if card_2 is at start of line, swap immediately (no logic to test)
-            if card_2_index == 0:
-                self.card_1.scale -= X_GAP_PCT # reset card_1 size
+            #if card_2_index == 0:
+            # WILL NEED TO REINDENT ONCE GAME LOGIC APPLIED
+            self.card_1.scale -= X_GAP_PCT # reset card_1 size
 
-                # WOULD BE GOOD TO WRAP SWAPPING INTO A FUNCTION, 
-                # INCLUDING LIST INDICES AND CARD POSITIONS.
-                # temporarily remove the sprites from their positions
-                # since can't have two of the same sprites in a SpriteList, 
-                # so a direct swap doesn't work
-                self.rows[card_1_row].pop(card_1_index)
-                self.rows[card_2_row].pop(card_2_index)
+            # swap positions
+            self.card_1.position = card_2_pos
+            self.card_2.position = card_1_pos
 
-                # Insert the sprites into their new positions
-                self.rows[card_2_row].insert(card_2_index, self.card_1)
-                self.rows[card_1_row].insert(card_1_index, self.card_2)
+            # WOULD BE GOOD TO WRAP SWAPPING INTO A FUNCTION, 
+            # INCLUDING LIST INDICES AND CARD POSITIONS.
+            # temporarily remove the sprites from their positions
+            # since can't have two of the same sprites in a SpriteList, 
+            # so a direct swap doesn't work
+            self.rows[card_1_row].pop(card_1_index)
+            self.rows[card_2_row].pop(card_2_index)
 
-                # TODO: update the positions of card_1 and card_2, so that they appear to move in the game window
-                # Can save out positions earlier, e.g. pos_1 = self.card_1.position, pos_2 = self.card_2.position
-                # then assign those after the swap.
+            # Insert the sprites into their new positions
+            self.rows[card_2_row].insert(card_2_index, self.card_1)
+            self.rows[card_1_row].insert(card_1_index, self.card_2)
+
+            # TODO: update the positions of card_1 and card_2, so that they appear to move in the game window
+            # Can save out positions earlier, e.g. pos_1 = self.card_1.position, pos_2 = self.card_2.position
+            # then assign those after the swap.
 
                 #for row in self.rows:
                 #    print(row)
