@@ -125,6 +125,14 @@ class Row(arcade.SpriteList):
         # We have looped over row and found all Blanks after Kings
         return True
 
+class Rows():
+    """A list of (four) `Row`s"""
+    def __init__(self):
+         self.rows = [Row() for _ in range(4)]
+
+    # def __str__(self):
+
+
 
 class MyGame(arcade.Window):
     """Main application class"""
