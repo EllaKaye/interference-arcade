@@ -145,7 +145,12 @@ class Rows():
             out += str(row) + "\n"
         return out
 
+    def get_card_indices(self, card):
+        """Get the row index, and index within row, for a card in rows"""
 
+        for i, row in enumerate(self.rows):
+            if (card) in row:
+                return i, row.index(card)
 
 class MyGame(arcade.Window):
     """Main application class"""
@@ -227,13 +232,6 @@ class MyGame(arcade.Window):
     #        pos2 = random.randrange(len(cards))
     #        cards.swap(pos1, pos2)
 
-    def get_card_indices(self, card):
-        """Get the row index, and index within row, for a card in rows"""
-
-        for i, row in enumerate(self.rows):
-            if (card) in row:
-                return i, row.index(card)
-
 
     def on_draw(self):
         self.clear()
@@ -272,8 +270,8 @@ class MyGame(arcade.Window):
             print(f"Card 2: {self.card_2}")
 
             # get row and index of card_1 and card_2
-            card_1_row, card_1_index = self.get_card_indices(self.card_1)
-            card_2_row, card_2_index = self.get_card_indices(self.card_2)
+            card_1_row, card_1_index = self.rows.get_card_indices(self.card_1)
+            card_2_row, card_2_index = self.rows.get_card_indices(self.card_2)
             print(f"card_2 is in row {card_2_row}, index {card_2_index}")
 
             # get positions
