@@ -310,13 +310,18 @@ class MyGame(arcade.Window):
             # if card_2 is at the start of a row, swap straight away
             if not self.test_card:
                 self.rows.swap_cards(self.card_1, self.card_2)
+                self.card_1 = self.card_2 = self.test_card = None
 
             else:
                 # check logic
                 if self.card_1.suit == self.test_card.suit and self.test_card.value_int == (self.card_1.value_int - 1):
                     self.rows.swap_cards(self.card_1, self.card_2)
+                    self.card_1 = self.card_2 = self.test_card = None
                 else:
                     print("Not a valid move")
+                    self.card_1.scale -= X_GAP_PCT
+                    self.card_1 = self.card_2 = self.test_card = None
+                    
 
             #print("After swap:")
             #print(self.rows)
