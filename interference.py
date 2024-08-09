@@ -94,7 +94,6 @@ class Card(arcade.Sprite):
         elif (self.suit in CARD_SUITS):
             return f"{self.value}{SUIT_ICONS[self.suit]}"
 
-
 class Row(arcade.SpriteList):
     """A row of cards, which is a SpriteList"""
 
@@ -125,12 +124,26 @@ class Row(arcade.SpriteList):
         # We have looped over row and found all Blanks after Kings
         return True
 
-#class Rows():
-#    """A list of (four) `Row`s"""
-#    def __init__(self):
-#         self.rows = [Row() for _ in range(4)]
+class Rows():
+    """A list of four `Row`s"""
+    
+    def __init__(self, rows):
+        self.rows = rows
 
-    # def __str__(self):
+    def __iter__(self):
+        return iter(self.rows) # makes the outer list iterable
+
+    def __reversed__(self):
+        return iter(reversed(self.rows)) 
+
+    def __getitem__(self, index):
+        return self.rows[index]  # Allows for indexing
+
+    def __str__(self):
+        out = ""
+        for row in reversed(self.rows):
+            out += str(row) + "\n"
+        return out
 
 
 
@@ -184,16 +197,21 @@ class MyGame(arcade.Window):
 
         # split the deck into four lists (the `in` clause) 
         # then assign these to Row class 
-        self.rows = [Row(row) for row in [self.deck[i*13:(i+1)*13] for i in range(4)]]
+        #self.rows = [Row(row) for row in [self.deck[i*13:(i+1)*13] for i in range(4)]]
+        self.rows = Rows([Row(row) for row in [self.deck[i*13:(i+1)*13] for i in range(4)]])
         
-        for row in reversed(self.rows):
-            print(row)
+        #for row in reversed(self.rows):
+        #    print(row)
+
+        print("Rows:")
+        print(self.rows)
 
         # clear deck, now card are in rows
         # self.deck = Deck()
 
         # check for (extremely unlikely case) that deal results in round over
         # set the value, in either case
+        # COULD HAVE METHOD FOR THIS IN ROWS CLASS
         self.round_over = all(row.is_stuck() for row in self.rows)
 
         # give each card a position, so it can be drawn
@@ -283,13 +301,9 @@ class MyGame(arcade.Window):
             self.rows[card_2_row].insert(card_2_index, self.card_1)
             self.rows[card_1_row].insert(card_1_index, self.card_2)
 
-            # TODO: update the positions of card_1 and card_2, so that they appear to move in the game window
-            # Can save out positions earlier, e.g. pos_1 = self.card_1.position, pos_2 = self.card_2.position
-            # then assign those after the swap.
+            print("After swap:")
+            print(self.rows)
 
-                #for row in self.rows:
-                #    print(row)
-                #    row.draw()
 
             # get row and index of test_card (if one exists, i.e. card_2 not at beginning of row)
 
