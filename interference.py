@@ -326,24 +326,6 @@ class MyGame(arcade.Window):
             #print("After swap:")
             #print(self.rows)
 
-
-
-
-            # get row and index of test_card (if one exists, i.e. card_2 not at beginning of row)
-
-                # get test_card
-            
-                # check if move is valid
-
-                    # if valid:
-
-                        # swap card_1 and card_2 in rows list
-
-                        # swap position of card_1 and card_2 in the window (and reset card_1 size)
-
-                        # reset card_1 and card_2 to None
-
-
 def main():
     window = MyGame()
     window.setup()
