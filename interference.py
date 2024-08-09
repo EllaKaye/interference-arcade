@@ -307,7 +307,16 @@ class MyGame(arcade.Window):
             self.test_card = self.rows.get_test_card(self.card_2)
             print(f"Test card: {self.test_card}")
 
-            #self.rows.swap_cards(self.card_1, self.card_2)
+            # if card_2 is at the start of a row, swap straight away
+            if not self.test_card:
+                self.rows.swap_cards(self.card_1, self.card_2)
+
+            else:
+                # check logic
+                if self.card_1.suit == self.test_card.suit and self.test_card.value_int == (self.card_1.value_int - 1):
+                    self.rows.swap_cards(self.card_1, self.card_2)
+                else:
+                    print("Not a valid move")
 
             #print("After swap:")
             #print(self.rows)
