@@ -152,6 +152,14 @@ class Rows():
             if (card) in row:
                 return i, row.index(card)
 
+    def get_test_card(self, card):
+        """Given a card, find the card before it in the row, if it exists"""
+        card_row, card_index = self.get_card_indices(card)
+        if card_index == 0:
+            return None
+        else:
+            return self[card_row][card_index - 1]
+
     def swap_cards(self, card1, card2):
             # get row and index of card1 and card2
             card1_row, card1_index = self.get_card_indices(card1)
@@ -269,20 +277,19 @@ class MyGame(arcade.Window):
     
     def on_mouse_press(self, x, y, button, modifiers):
 
-        print(x, y)
         card = None
 
         card_list = arcade.get_sprites_at_point((x, y), self.deck)
         # if we clicked on a card, extract the card from the list
         if card_list:
             card = card_list[0]
-            print(f"Card: {card}") 
+            #print(f"Card: {card}") 
         
         # if no cards selected and click on card, set card_1
         if card and card.value != "Blank" and not self.card_1 and not self.card_2:
             self.card_1 = card
             self.card_1.scale += X_GAP_PCT
-            print(f"Card 1: {self.card_1} at position {self.card_1.position}")
+            print(f"Card 1: {self.card_1}")
         
         # if card_1 selected and click on card, change card_1
         elif card and card.value != "Blank" and self.card_1 and not self.card_2:
@@ -296,10 +303,16 @@ class MyGame(arcade.Window):
             self.card_2 = card
             print(f"Card 2: {self.card_2}")
 
-            self.rows.swap_cards(self.card_1, self.card_2)
+            # get test card
+            self.test_card = self.rows.get_test_card(self.card_2)
+            print(f"Test card: {self.test_card}")
 
-            print("After swap:")
-            print(self.rows)
+            #self.rows.swap_cards(self.card_1, self.card_2)
+
+            #print("After swap:")
+            #print(self.rows)
+
+
 
 
             # get row and index of test_card (if one exists, i.e. card_2 not at beginning of row)
