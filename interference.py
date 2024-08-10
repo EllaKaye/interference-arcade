@@ -124,6 +124,17 @@ class Row(arcade.SpriteList):
         # We have looped over row and found all Blanks after Kings
         return True
 
+    def split_index(self):
+        if self[0].value_int != 2:
+            return 0
+        for i in range(1, len(self)):
+            if self[i].value_int != self[i - 1].value + 1:
+                return i
+        return len(self) - 1 # 12
+
+    def split(self, index):
+        return self[:index], self[index:]
+
 class Rows():
     """A list of four `Row`s"""
     
@@ -214,14 +225,21 @@ class MyGame(arcade.Window):
         # list of lists (one for each row)
         self.rows = None
 
+        # for checking game state
+        self.ordered = None # a list of ordered `Row`s
+        self.unordered = None # a Deck of cards returned at the end of a round
+
         # Game state
-        self.round = 1 # 3 rounds allowed, always start new game on round 1
+        self.round = None # 3 rounds allowed, always start new game on round 1
         self.round_over = None # need to allow for (unlikely) case that round is dealt over, so don't set to False in setup
-        self.game_over = False
+        self.game_over = None
 
     def setup(self):
         """Seup up game here. Call this function to restart"""
-        
+        # Game state
+        self.round = 1
+        self.game_over = False
+
         # create the deck as a SpriteList, and fill with cards
         # N.B. assign positions later, once they're in rows
         # need to create Aces and assign them images, then swap to Blank,
@@ -325,6 +343,12 @@ class MyGame(arcade.Window):
 
             #print("After swap:")
             #print(self.rows)
+
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed"""
+        if key == arcade.key.R:
+            pass
+            #self.new_round()
 
 def main():
     window = MyGame()
