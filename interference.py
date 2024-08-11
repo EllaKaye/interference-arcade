@@ -133,7 +133,7 @@ class Row(arcade.SpriteList):
         for i in range(1, len(self)):
             if self[i].value_int != self[i - 1].value + 1:
                 return i
-        return len(self) - 1 # 12
+        return len(self) - 1 # 12 (an ordered row with 2-K will still have a blank or other card at the end)
 
     def split(self, index):
         return self[:index], self[index:]
@@ -206,10 +206,14 @@ class Rows(list):
                 self[card1_row].insert(card1_index, card2)
 
     def split_indices(self):
-        pass
+        return [row.split_index() for row in self]
+
+    def split_rows(self, indices):
+        return [row.split(i) for row, i in zip(self, indices)]
     
     def assign_positions(self):
         pass
+
 class MyGame(arcade.Window):
     """Main application class"""
 
