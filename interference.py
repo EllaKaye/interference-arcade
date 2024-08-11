@@ -143,31 +143,23 @@ class Row(arcade.SpriteList):
             self.append(deck.pop())
         return self
 
-class Rows():
+class Rows(list):
     """A list of four `Row`s"""
     
     def __init__(self, rows):
-        self.rows = rows
-
-    def __iter__(self):
-        return iter(self.rows) # makes the outer list iterable
-
-    def __reversed__(self):
-        return iter(reversed(self.rows)) 
-
-    def __getitem__(self, index):
-        return self.rows[index]  # Allows for indexing
+        # initialise parent class (list) with list of rows
+        super().__init__(rows)
 
     def __str__(self):
         out = ""
-        for row in reversed(self.rows):
+        for row in reversed(self):
             out += str(row) + "\n"
         return out
 
     def get_card_indices(self, card):
         """Get the row index, and index within row, for a card in rows"""
 
-        for i, row in enumerate(self.rows):
+        for i, row in enumerate(self):
             if (card) in row:
                 return i, row.index(card)
 
