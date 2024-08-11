@@ -171,6 +171,22 @@ class Rows(list):
         else:
             return self[card_row][card_index - 1]
 
+    def is_valid_move(self, card1, card2):
+        test_card = self.get_test_card(card2)
+
+        # can move a 2 to the start of a row
+        # (test_card is None)
+        if not test_card and card1.value_int == 2:
+            return True
+        elif not test_card:
+            return False
+        # same suit and consecutive values
+        elif card1.suit == test_card.suit and test_card.value_int == (card1.value_int - 1):
+            return True
+        else:
+            return False
+
+
     def swap_cards(self, card1, card2):
             # get row and index of card1 and card2
             card1_row, card1_index = self.get_card_indices(card1)
@@ -212,7 +228,10 @@ class Rows(list):
         return [row.split(i) for row, i in zip(self, indices)]
     
     def assign_positions(self):
-        pass
+        """Assign positions for a full deal"""
+        for i, row in enumerate(self):
+            for j in range(13):
+                row[j].position = X_START + j * (CARD_WIDTH + X_GAP), Y_START + i * (CARD_HEIGHT + Y_GAP)
 
 class MyGame(arcade.Window):
     """Main application class"""
@@ -289,9 +308,10 @@ class MyGame(arcade.Window):
         self.round_over = all(row.is_stuck() for row in self.rows)
 
         # give each card a position, so it can be drawn
-        for i, row in enumerate(self.rows):
-            for j in range(13):
-                row[j].position = X_START + j * (CARD_WIDTH + X_GAP), Y_START + i * (CARD_HEIGHT + Y_GAP)
+        self.rows.assign_positions()
+        #for i, row in enumerate(self.rows):
+        #    for j in range(13):
+        #        row[j].position = X_START + j * (CARD_WIDTH + X_GAP), Y_START + i * (CARD_HEIGHT + Y_GAP)
 
 
     def on_draw(self):
