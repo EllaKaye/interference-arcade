@@ -61,6 +61,9 @@ class Deck(arcade.SpriteList):
             pos2 = random.randrange(len(self))
             self.swap(pos1, pos2)
 
+    def remove_blanks(self):
+        pass
+
 
     def __str__(self):
         return " ".join(str(card) for card in self)
@@ -135,6 +138,11 @@ class Row(arcade.SpriteList):
     def split(self, index):
         return self[:index], self[index:]
 
+    def fill_row(self, deck):
+        while len(self) < 13:
+            self.append(deck.pop())
+        return self
+
 class Rows():
     """A list of four `Row`s"""
     
@@ -182,19 +190,19 @@ class Rows():
             card1_pos = card1.position
             card2_pos = card2.position
 
-            # if card_2 is at start of line, swap immediately (no logic to test)
-            #if card_2_index == 0:
-            # WILL NEED TO REINDENT ONCE GAME LOGIC APPLIED
-            card1.scale -= X_GAP_PCT # reset card_1 size
-
-            # swap positions
+            # reset card_1 size
+            card1.scale -= X_GAP_PCT 
+            
+            # swap positions (affects drawing)
             card1.position = card2_pos
             card2.position = card1_pos
-
+            
+            # swap in lists (affects game logic)
             if card1_row == card2_row:
                 # If both cards are in the same row, swap them directly, using built-in swap method
                 self[card1_row].swap(card1_index, card2_index)
             else:
+                # if in different rows
                 # temporarily remove the sprites from their positions
                 # since can't have two of the same sprites in a SpriteList, 
                 # so a direct swap doesn't work
@@ -205,7 +213,11 @@ class Rows():
                 self[card2_row].insert(card2_index, card1)
                 self[card1_row].insert(card1_index, card2)
 
-
+    def split_indices(self):
+        pass
+    
+    def assign_positions(self):
+        pass
 class MyGame(arcade.Window):
     """Main application class"""
 
@@ -329,6 +341,7 @@ class MyGame(arcade.Window):
             if not self.test_card:
                 self.rows.swap_cards(self.card_1, self.card_2)
                 self.card_1 = self.card_2 = self.test_card = None
+
 
             else:
                 # check logic
