@@ -178,6 +178,7 @@ class Rows(list):
         # (test_card is None)
         if not test_card and card1.value_int == 2:
             return True
+        # can't move anything else to start of row
         elif not test_card:
             return False
         # same suit and consecutive values
@@ -253,7 +254,7 @@ class MyGame(arcade.Window):
 
         # cards we need to consider each move
         self.card_1 = None # the first card clicked on
-        self.card_2 = None # where we try to move the card (should be a Blank)
+        self.blank = None # where we try to move the card (should be a Blank)
         self.test_card = None # the card before the Blank card, to check logic for valid move
 
         # list of lists (one for each row)
@@ -338,45 +339,35 @@ class MyGame(arcade.Window):
             card = card_list[0]
             #print(f"Card: {card}") 
         
-        # if no cards selected and click on card, set card_1
-        if card and card.value != "Blank" and not self.card_1 and not self.card_2:
+        # if no card to swap selected and click on card, set card_1
+        if card and card.value != "Blank" and not self.card_1 and not self.blank:
             self.card_1 = card
             self.card_1.scale += X_GAP_PCT
             print(f"Card 1: {self.card_1}")
         
         # if card_1 selected and click on card, change card_1
-        elif card and card.value != "Blank" and self.card_1 and not self.card_2:
+        elif card and card.value != "Blank" and self.card_1 and not self.blank:
             self.card_1.scale -= X_GAP_PCT
             self.card_1 = card
             self.card_1.scale += X_GAP_PCT
             print(f"New card 1: {self.card_1}")
 
-        # if card_1 selected and click on Blank, set card_2
-        elif card and card.value == "Blank" and self.card_1 and not self.card_2:
-            self.card_2 = card
-            print(f"Card 2: {self.card_2}")
+        # if card_1 selected and click on Blank, set blank
+        elif card and card.value == "Blank" and self.card_1 and not self.blank:
+            self.blank = card
+            print(f"Blank: {self.blank}")
 
-            # get test card
-            self.test_card = self.rows.get_test_card(self.card_2)
-            print(f"Test card: {self.test_card}")
+            # if we have a card and a blank, and valid move, then swap
+            if self.card_1 and self.blank and self.rows.is_valid_move(self.card_1, self.blank):
+                self.rows.swap_cards(self.card_1, self.blank)
+                self.card_1 = self.blank = self.test_card = None
 
-            # if card_2 is at the start of a row, swap straight away
-            if not self.test_card:
-                self.rows.swap_cards(self.card_1, self.card_2)
-                self.card_1 = self.card_2 = self.test_card = None
-
-
+            # otherwise move is not valid
             else:
-                # check logic
-                if self.card_1.suit == self.test_card.suit and self.test_card.value_int == (self.card_1.value_int - 1):
-                    self.rows.swap_cards(self.card_1, self.card_2)
-                    self.card_1 = self.card_2 = self.test_card = None
-                else:
-                    print("Not a valid move")
-                    self.card_1.scale -= X_GAP_PCT
-                    self.card_1 = self.card_2 = self.test_card = None
-                    
-
+                print("Not a valid move")
+                self.card_1.scale -= X_GAP_PCT
+                self.card_1 = self.blank = self.test_card = None
+                
             #print("After swap:")
             #print(self.rows)
 
