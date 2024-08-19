@@ -389,6 +389,9 @@ class MyGame(arcade.Window):
         print("Unordered:")
         print(unordered_deck)
 
+        # TODO: need to handle blanks before filling the rest of the rows
+
+        # deal the rest of the cards
         self.rows = Rows([row.fill_row(unordered) for row in self.rows])
 
         print("filled:")
@@ -396,6 +399,8 @@ class MyGame(arcade.Window):
 
         print("Unordered after filling:")
         print(unordered_deck)
+
+        # TODO: reassign positions so new round gets drawn appropriately
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed"""
