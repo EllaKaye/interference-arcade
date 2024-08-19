@@ -131,7 +131,7 @@ class Row(arcade.SpriteList):
         if self[0].value_int != 2:
             return 0
         for i in range(1, len(self)):
-            if self[i].value_int != self[i - 1].value + 1:
+            if self[i].value_int != self[i - 1].value_int + 1:
                 return i
         return len(self) - 1 # 12 (an ordered row with 2-K will still have a blank or other card at the end)
 
@@ -186,7 +186,6 @@ class Rows(list):
             return True
         else:
             return False
-
 
     def swap_cards(self, card1, card2):
             # get row and index of card1 and card2
@@ -323,14 +322,12 @@ class MyGame(arcade.Window):
         #    for j in range(13):
         #        row[j].position = X_START + j * (CARD_WIDTH + X_GAP), Y_START + i * (CARD_HEIGHT + Y_GAP)
 
-
     def on_draw(self):
         self.clear()
 
         for row in self.rows:
             row.draw()
-
-    
+ 
     def on_mouse_press(self, x, y, button, modifiers):
 
         card = None
@@ -380,6 +377,25 @@ class MyGame(arcade.Window):
 
     def new_round(self):
         print("New round!")
+        ordered, unordered = self.rows.ordered_unordered()
+        self.rows = Rows([Row(row) for row in ordered])
+        unordered_deck = Deck()
+        unordered_deck.extend(unordered)
+        unordered_deck.shuffle()
+
+        print("Ordered:")
+        print(self.rows)
+
+        print("Unordered:")
+        print(unordered_deck)
+
+        self.rows = Rows([row.fill_row(unordered) for row in self.rows])
+
+        print("filled:")
+        print(self.rows)
+
+        print("Unordered after filling:")
+        print(unordered_deck)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed"""
