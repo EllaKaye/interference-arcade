@@ -44,7 +44,7 @@ CARD_SUITS = ["Clubs", "Hearts", "Spades", "Diamonds"]
 # Not needed for game, but makes printing for debigging nicer
 SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamonds": "♦️"}
 VALUES_INT = {"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13, "Blank": 0}
-#VALUES_INT = {value: index for index, value in enumerate(CARD_VALUES)}
+#VALUES_INT = {value: index + 1 for index, value in enumerate(CARD_VALUES)}
 
 class Deck(arcade.SpriteList):
     "Deck spritelist. Will contain cards"
@@ -221,12 +221,19 @@ class Rows(list):
                 self[card2_row].insert(card2_index, card1)
                 self[card1_row].insert(card1_index, card2)
 
-    def split_indices(self):
-        return [row.split_index() for row in self]
+    # def split_indices(self):
+    #    return [row.split_index() for row in self]
 
-    def split_rows(self, indices):
-        return [row.split(i) for row, i in zip(self, indices)]
-    
+    # def split_rows(self, indices):
+    #    return [row.split(i) for row, i in zip(self, indices)]
+
+    def ordered_unordered(self):
+        indices = [row.split_index() for row in self]
+        split_rows = [row.split(i) for row, i in zip(self, indices)]
+        ordered = [item[0] for item in split_rows]
+        unordered = [element for item in split_rows for element in item[1]]
+        return ordered, unordered
+        
     def assign_positions(self):
         """Assign positions for a full deal"""
         for i, row in enumerate(self):
