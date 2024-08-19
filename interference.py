@@ -228,6 +228,9 @@ class Rows(list):
     # def split_rows(self, indices):
     #    return [row.split(i) for row, i in zip(self, indices)]
 
+    def all_stuck(self):
+        return all(row.is_stuck() for row in self)
+
     def ordered_unordered(self):
         indices = [row.split_index() for row in self]
         split_rows = [row.split(i) for row, i in zip(self, indices)]
@@ -312,8 +315,7 @@ class MyGame(arcade.Window):
 
         # check for (extremely unlikely case) that deal results in round over
         # set the value, in either case
-        # COULD HAVE METHOD FOR THIS IN ROWS CLASS
-        self.round_over = all(row.is_stuck() for row in self.rows)
+        self.round_over = self.rows.all_stuck()
 
         # give each card a position, so it can be drawn
         self.rows.assign_positions()
@@ -362,6 +364,11 @@ class MyGame(arcade.Window):
                 self.rows.swap_cards(self.card_1, self.blank)
                 self.card_1 = self.blank = self.test_card = None
 
+                # check if game is stuck
+                self.round_over = self.rows.all_stuck()
+                if self.round_over:
+                    print("Round over")
+
             # otherwise move is not valid
             else:
                 print("Not a valid move")
@@ -371,11 +378,14 @@ class MyGame(arcade.Window):
             #print("After swap:")
             #print(self.rows)
 
+    def new_round(self):
+        print("New round!")
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed"""
         if key == arcade.key.R:
             pass
-            #self.new_round()
+            self.new_round()
 
 def main():
     window = MyGame()
