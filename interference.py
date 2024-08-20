@@ -37,6 +37,7 @@ SCREEN_HEIGHT = 2 * Y_MARGIN + 4 * CARD_HEIGHT + 3 * Y_GAP
 SCREEN_TITLE = "Interference"
 
 # Card constants
+# 'Blank' allows for playing spaces (will need to be ignored when creating deck)
 CARD_VALUES = ["Blank", "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 # GAME_VALUES = ["Blank", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 #VALUES_INT = {"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13, "Blank": 0}
@@ -320,6 +321,10 @@ class MyGame(arcade.Window):
             row.draw()
  
     def on_mouse_press(self, x, y, button, modifiers):
+
+        # click shouldn't register anything if the round is over
+        if self.round_over:
+            return
 
         card = None
 
