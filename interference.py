@@ -397,8 +397,14 @@ class MyGame(arcade.Window):
         
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed"""
+        
+        # start a new round
         if key == arcade.key.R:
             self.new_round()
+
+        # start a new game
+        if key == arcade.key.ENTER:
+            self.setup()
 
 
 def main():
