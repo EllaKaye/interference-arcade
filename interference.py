@@ -37,11 +37,11 @@ SCREEN_HEIGHT = 2 * Y_MARGIN + 4 * CARD_HEIGHT + 3 * Y_GAP
 SCREEN_TITLE = "Interference"
 
 # Card constants
-CARD_VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+CARD_VALUES = ["Blank", "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 # GAME_VALUES = ["Blank", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 #VALUES_INT = {"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13, "Blank": 0}
-VALUES_INT = {value: index + 1 for index, value in enumerate(CARD_VALUES)} # allows us to check for consecutive values
-VALUES_INT["Blank"] = 0
+VALUES_INT = {value: index for index, value in enumerate(CARD_VALUES)} # allows us to check for consecutive values
+#VALUES_INT["Blank"] = 0
 CARD_SUITS = ["Clubs", "Hearts", "Spades", "Diamonds"]
 # Not needed for game, but makes printing for debigging nicer
 SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamonds": "♦️"}
@@ -276,7 +276,7 @@ class MyGame(arcade.Window):
         #self.deck = arcade.SpriteList()
         self.deck = Deck()
         for card_suit in CARD_SUITS:
-            for card_value in CARD_VALUES:
+            for card_value in CARD_VALUES[1:]: # don't create 'Blank' cards
                 card = Card(card_suit, card_value, CARD_SCALE)
                 card.set_visibility()
                 self.deck.append(card)
