@@ -376,31 +376,29 @@ class MyGame(arcade.Window):
             #print(self.rows)
 
     def new_round(self):
-        print("New round!")
         ordered, unordered = self.rows.ordered_unordered()
         self.rows = Rows([Row(row) for row in ordered])
+
+        # separate out blanks for the rest
+        blanks = [card for card in unordered if card.value == "Blank"]
+        value_cards = [card for card in unordered if card.value != "Blank"]
+
+        # create and shuffle a deck of the unordered cards
         unordered_deck = Deck()
-        unordered_deck.extend(unordered)
+        unordered_deck.extend(value_cards)
         unordered_deck.shuffle()
 
-        print("Ordered:")
-        print(self.rows)
-
-        print("Unordered:")
-        print(unordered_deck)
-
-        # TODO: need to handle blanks before filling the rest of the rows
+        # deal the blanks
+        for row in self.rows:
+            row.append(blanks.pop())
 
         # deal the rest of the cards
-        self.rows = Rows([row.fill_row(unordered) for row in self.rows])
+        for row in self.rows:
+            row.fill_row(value_cards)
 
-        print("filled:")
-        print(self.rows)
-
-        print("Unordered after filling:")
-        print(unordered_deck)
-
-        # TODO: reassign positions so new round gets drawn appropriately
+        # reassign positions so new round gets drawn appropriately
+        self.rows.assign_positions()
+        
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed"""
