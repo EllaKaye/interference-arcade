@@ -47,6 +47,9 @@ CARD_SUITS = ["Clubs", "Hearts", "Spades", "Diamonds"]
 # Not needed for game, but makes printing for debigging nicer
 SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamonds": "♦️"}
 
+# For text
+DEFAULT_LINE_HEIGHT = 45
+DEFAULT_FONT_SIZE = 20
 
 class Deck(arcade.SpriteList):
     "Deck spritelist. Will contain cards"
@@ -259,10 +262,15 @@ class MyGame(arcade.Window):
         self.round_over = None # need to allow for (unlikely) case that round is dealt over, so don't set to False in setup
         self.game_over = None
 
+        # For displaying user interface messages
+        self.round_message = None
+        self.message = None
+
     def setup(self):
         """Seup up game here. Call this function to restart"""
         # Game state
         self.round = 1
+        self.round_message = f"Round {self.round} of 3"
         self.game_over = False
 
         # create the deck as a SpriteList, and fill with cards
@@ -289,15 +297,20 @@ class MyGame(arcade.Window):
         # then assign these to Row class 
         #self.rows = [Row(row) for row in [self.deck[i*13:(i+1)*13] for i in range(4)]]
         self.rows = Rows([Row(row) for row in [self.deck[i*13:(i+1)*13] for i in range(4)]])
-        
-        #for row in reversed(self.rows):
-        #    print(row)
 
-        print("Rows:")
-        print(self.rows)
+        #print("Rows:")
+        #print(self.rows)
 
-        # clear deck, now card are in rows
-        # self.deck = Deck()
+        # round message
+        start_x = 0
+        start_y = SCREEN_HEIGHT - DEFAULT_LINE_HEIGHT * 1.5
+        self.round_message = arcade.Text("Hello",
+                          start_x,
+                          start_y,
+                          arcade.color.WHITE,
+                          DEFAULT_FONT_SIZE)
+                          #width=SCREEN_WIDTH,
+                          #align="left"
 
         # check for (extremely unlikely case) that deal results in round over
         # set the value, in either case
@@ -305,16 +318,22 @@ class MyGame(arcade.Window):
 
         # give each card a position, so it can be drawn
         self.rows.assign_positions()
-        #for i, row in enumerate(self.rows):
-        #    for j in range(13):
-        #        row[j].position = X_START + j * (CARD_WIDTH + X_GAP), Y_START + i * (CARD_HEIGHT + Y_GAP)
 
     def on_draw(self):
         self.clear()
 
+        self.round_message.draw()
+
+        # manually reset viewport
+        # this is necessary to overcome a weird effect where drawing the text 
+        # causes an annimation effect that makes all the drawing shrink towards the bottom left corner
+        arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
+
         for row in self.rows:
             row.draw()
- 
+
+
+
     def on_mouse_press(self, x, y, button, modifiers):
 
         # click shouldn't register anything if the round is over
@@ -367,6 +386,10 @@ class MyGame(arcade.Window):
             #print(self.rows)
 
     def new_round(self):
+        self.round += 1
+
+        print(f"Round {self.round}")
+
         ordered, unordered = self.rows.ordered_unordered()
         self.rows = Rows([Row(row) for row in ordered])
 
