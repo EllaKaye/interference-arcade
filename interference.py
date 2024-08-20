@@ -250,13 +250,9 @@ class MyGame(arcade.Window):
         # cards we need to consider each move
         self.card_1 = None # the first card clicked on
         self.blank = None # where we try to move the card (should be a Blank)
-        
+
         # list of lists (one for each row)
         self.rows = None
-
-        # for checking game state
-        self.ordered = None # a list of ordered `Row`s
-        self.unordered = None # a Deck of cards returned at the end of a round
 
         # Game state
         self.round = None # 3 rounds allowed, always start new game on round 1
