@@ -5,7 +5,7 @@ import random
 I use the follow 'magic' numbers throught:
 4: number of suits, number of rows
 13: number of cards in a suit, number of cards in a row
-There numbers are well understood in the context of a deck of cards,
+These numbers are well understood in the context of a deck of cards,
 so I feel it's acceptable to use them hard-coded.
 """
 
@@ -16,8 +16,7 @@ CARD_SCALE = 0.6
 CARD_WIDTH = 140 * CARD_SCALE
 CARD_HEIGHT = 190 * CARD_SCALE
 
-# How much space do we leave as a gap between the cards?
-# Done as a percent of the card size.
+# How much space do we leave at the edges?
 X_MARGIN = CARD_WIDTH
 Y_MARGIN = CARD_WIDTH
 
@@ -39,12 +38,14 @@ SCREEN_TITLE = "Interference"
 
 # Card constants
 CARD_VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
-GAME_VALUES = ["Blank", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+# GAME_VALUES = ["Blank", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+#VALUES_INT = {"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13, "Blank": 0}
+VALUES_INT = {value: index + 1 for index, value in enumerate(CARD_VALUES)} # allows us to check for consecutive values
+VALUES_INT["Blank"] = 0
 CARD_SUITS = ["Clubs", "Hearts", "Spades", "Diamonds"]
 # Not needed for game, but makes printing for debigging nicer
 SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamonds": "♦️"}
-VALUES_INT = {"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13, "Blank": 0}
-#VALUES_INT = {value: index + 1 for index, value in enumerate(CARD_VALUES)}
+
 
 class Deck(arcade.SpriteList):
     "Deck spritelist. Will contain cards"
@@ -53,7 +54,10 @@ class Deck(arcade.SpriteList):
         """Deck constructor"""
         # will add cards later
         super().__init__() # initialise the parent class
-        
+
+    def __str__(self):
+        return " ".join(str(card) for card in self)
+      
     def shuffle(self):
         """Shuffle a SpriteList of cards"""
         # random.shuffle doesn't work on a SpriteList, so need a custom method
@@ -61,12 +65,6 @@ class Deck(arcade.SpriteList):
             pos2 = random.randrange(len(self))
             self.swap(pos1, pos2)
 
-    def remove_blanks(self):
-        pass
-
-
-    def __str__(self):
-        return " ".join(str(card) for card in self)
 
 class Card(arcade.Sprite):
     """Card sprite"""
@@ -85,7 +83,6 @@ class Card(arcade.Sprite):
         # Call the parent
         super().__init__(self.image_file_name, scale, hit_box_algorithm="None")
 
-
     def set_visibility(self):
         """Set visibility for the card. Needs to be called after card initialised in setup"""
         if self.value in ["A", "Blank"]:
@@ -97,6 +94,7 @@ class Card(arcade.Sprite):
         elif (self.suit in CARD_SUITS):
             return f"{self.value}{SUIT_ICONS[self.suit]}"
 
+
 class Row(arcade.SpriteList):
     """A row of cards, which is a SpriteList"""
 
@@ -104,7 +102,6 @@ class Row(arcade.SpriteList):
         """Row constructor"""
         super().__init__() # initialise the parent class
         self.extend(cards) # add the given cards to the row
-
 
     def __str__(self):
         return " ".join(str(card) for card in self)
@@ -221,12 +218,6 @@ class Rows(list):
                 self[card2_row].insert(card2_index, card1)
                 self[card1_row].insert(card1_index, card2)
 
-    # def split_indices(self):
-    #    return [row.split_index() for row in self]
-
-    # def split_rows(self, indices):
-    #    return [row.split(i) for row, i in zip(self, indices)]
-
     def all_stuck(self):
         return all(row.is_stuck() for row in self)
 
@@ -242,6 +233,7 @@ class Rows(list):
         for i, row in enumerate(self):
             for j in range(13):
                 row[j].position = X_START + j * (CARD_WIDTH + X_GAP), Y_START + i * (CARD_HEIGHT + Y_GAP)
+
 
 class MyGame(arcade.Window):
     """Main application class"""
@@ -296,7 +288,6 @@ class MyGame(arcade.Window):
 
         # shuffle the deck
         self.deck.shuffle()
-
 
         # split the deck into four lists (the `in` clause) 
         # then assign these to Row class 
@@ -399,12 +390,11 @@ class MyGame(arcade.Window):
         # reassign positions so new round gets drawn appropriately
         self.rows.assign_positions()
         
-
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed"""
         if key == arcade.key.R:
-            pass
             self.new_round()
+
 
 def main():
     window = MyGame()
