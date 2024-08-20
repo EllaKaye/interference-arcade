@@ -250,8 +250,7 @@ class MyGame(arcade.Window):
         # cards we need to consider each move
         self.card_1 = None # the first card clicked on
         self.blank = None # where we try to move the card (should be a Blank)
-        self.test_card = None # the card before the Blank card, to check logic for valid move
-
+        
         # list of lists (one for each row)
         self.rows = None
 
@@ -355,7 +354,7 @@ class MyGame(arcade.Window):
             # if we have a card and a blank, and valid move, then swap
             if self.card_1 and self.blank and self.rows.is_valid_move(self.card_1, self.blank):
                 self.rows.swap_cards(self.card_1, self.blank)
-                self.card_1 = self.blank = self.test_card = None
+                self.card_1 = self.blank = None
 
                 # check if game is stuck
                 self.round_over = self.rows.all_stuck()
@@ -366,7 +365,7 @@ class MyGame(arcade.Window):
             else:
                 print("Not a valid move")
                 self.card_1.scale -= X_GAP_PCT
-                self.card_1 = self.blank = self.test_card = None
+                self.card_1 = self.blank = None
                 
             #print("After swap:")
             #print(self.rows)
