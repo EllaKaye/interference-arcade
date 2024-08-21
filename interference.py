@@ -339,7 +339,7 @@ class MyGame(arcade.Window):
     def on_mouse_press(self, x, y, button, modifiers):
 
         # click shouldn't register anything if the round is over
-        if self.round_over:
+        if self.round_over or self.game_over:
             return
 
         card = None
@@ -378,6 +378,12 @@ class MyGame(arcade.Window):
                 if self.round_over:
                     print("Round over")
 
+                    # check if game is over
+                    if self.round == 3:
+                        self.game_over = True
+                        print("Game over")
+                
+
             # otherwise move is not valid
             else:
                 print("Not a valid move")
@@ -388,6 +394,11 @@ class MyGame(arcade.Window):
             #print(self.rows)
 
     def new_round(self):
+
+        if self.round == 3:
+            print("Out of rounds")
+            return
+
         self.round_over = False
         self.round += 1
 
