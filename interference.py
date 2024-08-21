@@ -49,7 +49,7 @@ SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamon
 
 # For text
 DEFAULT_LINE_HEIGHT = 45
-DEFAULT_FONT_SIZE = 20
+DEFAULT_FONT_SIZE = 40
 
 class Deck(arcade.SpriteList):
     "Deck spritelist. Will contain cards"
@@ -264,13 +264,14 @@ class MyGame(arcade.Window):
 
         # For displaying user interface messages
         self.round_message = None
+        self.round_message_text = None
         self.message = None
 
     def setup(self):
         """Seup up game here. Call this function to restart"""
         # Game state
         self.round = 1
-        self.round_message = f"Round {self.round} of 3"
+        self.round_message_text = f"Round {self.round} of 3"
         self.game_over = False
 
         # create the deck as a SpriteList, and fill with cards
@@ -302,15 +303,16 @@ class MyGame(arcade.Window):
         #print(self.rows)
 
         # round message
-        start_x = 0
+        start_x = X_MARGIN
         start_y = SCREEN_HEIGHT - DEFAULT_LINE_HEIGHT * 1.5
-        self.round_message = arcade.Text("Hello",
+        self.round_message = arcade.Text(self.round_message_text,
                           start_x,
                           start_y,
                           arcade.color.WHITE,
-                          DEFAULT_FONT_SIZE)
+                          font_size=DEFAULT_FONT_SIZE)
                           #width=SCREEN_WIDTH,
                           #align="left"
+        #self.round_message.scale = 0.5
 
         # check for (extremely unlikely case) that deal results in round over
         # set the value, in either case
@@ -387,6 +389,10 @@ class MyGame(arcade.Window):
 
     def new_round(self):
         self.round += 1
+
+        # Update, then refresh, the round message
+        self.round_message_text = f"Round {self.round} of 3"
+        self.round_message.text = self.round_message_text
 
         print(f"Round {self.round}")
 
