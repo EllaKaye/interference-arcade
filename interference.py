@@ -388,6 +388,7 @@ class MyGame(arcade.Window):
             #print(self.rows)
 
     def new_round(self):
+        self.round_over = False
         self.round += 1
 
         # Update, then refresh, the round message
@@ -414,7 +415,7 @@ class MyGame(arcade.Window):
 
         # deal the rest of the cards
         for row in self.rows:
-            row.fill_row(value_cards)
+            row.fill_row(unordered_deck)
 
         # reassign positions so new round gets drawn appropriately
         self.rows.assign_positions()
