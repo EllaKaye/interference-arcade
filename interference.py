@@ -49,7 +49,7 @@ SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamon
 
 # For text
 DEFAULT_LINE_HEIGHT = 45
-DEFAULT_FONT_SIZE = 40
+DEFAULT_FONT_SIZE = 20
 
 class Deck(arcade.SpriteList):
     "Deck spritelist. Will contain cards"
@@ -131,8 +131,9 @@ class Row(arcade.SpriteList):
     def split_index(self):
         if self[0].value_int != 2:
             return 0
+        suit = self[0].suit
         for i in range(1, len(self)):
-            if self[i].value_int != self[i - 1].value_int + 1:
+            if self[i].suit != suit or self[i].value_int != i + 2:
                 return i
         return len(self) - 1 # 12 (an ordered row with 2-K will still have a blank or other card at the end)
 
