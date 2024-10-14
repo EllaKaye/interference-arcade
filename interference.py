@@ -61,7 +61,7 @@ class Deck(arcade.SpriteList):
 
     def __str__(self):
         return " ".join(str(card) for card in self)
-      
+    
     def shuffle(self):
         """Shuffle a SpriteList of cards"""
         # random.shuffle doesn't work on a SpriteList, so need a custom method
@@ -145,6 +145,9 @@ class Row(arcade.SpriteList):
             self.append(deck.pop())
         return self
 
+    def is_ordered(self):
+        return self.split_index() == 12
+
 class Rows(list):
     """A list of four `Row`s"""
     
@@ -175,6 +178,10 @@ class Rows(list):
 
     def is_valid_move(self, card1, card2):
         test_card = self.get_test_card(card2)
+
+        # Move not valid if card1 is blank or if card2 is not blank
+        if card1.value == "Blank" or card2.value != "Blank":
+            return False
 
         # can move a 2 to the start of a row
         # (test_card is None)
@@ -232,6 +239,9 @@ class Rows(list):
         ordered = [item[0] for item in split_rows]
         unordered = [element for item in split_rows for element in item[1]]
         return ordered, unordered
+
+    def all_ordered(self):
+        return all(row.is_ordered() for row in self)
         
     def assign_positions(self):
         """Assign positions for a full deal"""
@@ -262,6 +272,7 @@ class MyGame(arcade.Window):
         self.round = None # 3 rounds allowed, always start new game on round 1
         self.round_over = None # need to allow for (unlikely) case that round is dealt over, so don't set to False in setup
         self.game_over = None
+        self.success = None # if all rows are ordered
 
         # For displaying user interface messages
         self.round_message = None
@@ -274,6 +285,12 @@ class MyGame(arcade.Window):
         self.round = 1
         self.round_message_text = f"Round {self.round} of 3"
         self.game_over = False
+
+        # deselect any selected cards
+        # e.g. if call new game in middle of another game
+        if self.card_1:
+            self.card_1.scale -= X_GAP_PCT
+        self.card_1 = self.blank = None
 
         # create the deck as a SpriteList, and fill with cards
         # N.B. assign positions later, once they're in rows
@@ -374,15 +391,22 @@ class MyGame(arcade.Window):
                 self.rows.swap_cards(self.card_1, self.blank)
                 self.card_1 = self.blank = None
 
-                # check if game is stuck
+                # check game state after successful swap
                 self.round_over = self.rows.all_stuck()
                 if self.round_over:
-                    print("Round over")
-
-                    # check if game is over
-                    if self.round == 3:
+                    self.success = self.rows.all_ordered()
+                    if self.success:
+                        print("Game won!")
+                        self.round_message_text = "Success!"
+                    elif self.round == 3 and not self.success:
                         self.game_over = True
                         print("Game over")
+                        self.round_message_text = "Game over"
+                    else:
+                        print("Round over")
+                        self.round_message_text = "Round over"
+                    
+                    self.round_message.text = self.round_message_text
                 
 
             # otherwise move is not valid
@@ -402,6 +426,11 @@ class MyGame(arcade.Window):
 
         self.round_over = False
         self.round += 1
+
+        # deselect any selected cards
+        if self.card_1:
+            self.card_1.scale -= X_GAP_PCT
+        self.card_1 = self.blank = None
 
         # Update, then refresh, the round message
         self.round_message_text = f"Round {self.round} of 3"
