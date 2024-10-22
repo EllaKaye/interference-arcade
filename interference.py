@@ -318,8 +318,6 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
 
-        arcade.set_background_color(arcade.color.AMAZON)
-
         # Sprite list with all cards (regardless of row)
         self.deck = None
 
@@ -404,6 +402,10 @@ class GameView(arcade.View):
         # give each card a position, so it can be drawn
         self.rows.assign_positions()
 
+    def on_show_view(self):
+        """Called whenever this view is shown"""
+        arcade.set_background_color(arcade.color.AMAZON)
+
     def on_draw(self):
         self.clear()
 
@@ -416,8 +418,6 @@ class GameView(arcade.View):
 
         for row in self.rows:
             row.draw()
-
-
 
     def on_mouse_press(self, x, y, button, modifiers):
 
@@ -469,7 +469,9 @@ class GameView(arcade.View):
                         self.round_message_text = "Game over"
                     else:
                         print("Round over")
-                        self.round_message_text = "Round over"
+                        #self.round_message_text = "Round over"
+                        self.show_round_over()
+
                     
                     self.round_message.text = self.round_message_text
                 
@@ -541,6 +543,41 @@ class GameView(arcade.View):
         if key == arcade.key.I:
             instructions_view = InstructionView()
             self.window.show_view(instructions_view)
+
+    def show_round_over(self):
+        round_over_view = RoundOverView(self)
+        self.window.show_view(round_over_view)
+
+
+class RoundOverView(arcade.View):
+    def __init__(self, game_view):
+        super().__init__()
+        # Store reference to the game view that created this round over view
+        self.game_view = game_view
+
+    def on_show_view(self):
+        arcade.set_background_color(arcade.color.WHITE)
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_text("ROUND OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Press R to start new round", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+                         arcade.color.GRAY, font_size=20, anchor_x="center")
+
+        arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
+
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed"""
+
+        # show instructions
+        if key == arcade.key.R:
+            # Start new round in the existing game view
+            self.game_view.new_round()
+            # Switch back to the game view
+            self.window.show_view(self.game_view)
+            # Call on_show_view to reset the background color
+            self.game_view.on_show_view()
 
 
 class GameOverView(arcade.View):
