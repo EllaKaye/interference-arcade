@@ -256,33 +256,31 @@ class MenuView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Menu Screen", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+        arcade.draw_text("Interference", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("Click to advance", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+        arcade.draw_text("Press I for instructions", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+                         arcade.color.GRAY, font_size=20, anchor_x="center")
+        arcade.draw_text("Click or press ENTER to start a new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 150,
                          arcade.color.GRAY, font_size=20, anchor_x="center")
 
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
-    def on_mouse_press(self, _x, _y, _button, _modifiers):
-        instructions_view = InstructionView()
-        self.window.show_view(instructions_view)
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed"""
 
-class GameOverView(arcade.View):
-    def on_show_view(self):
-        arcade.set_background_color(arcade.color.BLACK)
+        # show instructions
+        if key == arcade.key.I:
+            instructions_view = InstructionView()
+            self.window.show_view(instructions_view)
 
-    def on_draw(self):
-        self.clear()
-        arcade.draw_text("GAME OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("Click to advance", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
-                         arcade.color.GRAY, font_size=20, anchor_x="center")
-
-        arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
+        # start a new game
+        if key == arcade.key.ENTER:
+            game_view = GameView()
+            self.window.show_view(game_view)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        instructions_view = InstructionView()
-        self.window.show_view(instructions_view)
+        game_view = GameView()
+        self.window.show_view(game_view)
 
 class InstructionView(arcade.View):
     def __init__(self):
@@ -300,6 +298,14 @@ class InstructionView(arcade.View):
                         arcade.color.GRAY, font_size=20, width = SCREEN_WIDTH-20, anchor_x="left", multiline=True)
 
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
+
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed"""
+
+        # start a new game
+        if key == arcade.key.ENTER:
+            game_view = GameView()
+            self.window.show_view(game_view)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         game_view = GameView()
@@ -531,6 +537,28 @@ class GameView(arcade.View):
         if key == arcade.key.ENTER:
             self.setup()
 
+        # show instructions
+        if key == arcade.key.I:
+            instructions_view = InstructionView()
+            self.window.show_view(instructions_view)
+
+
+class GameOverView(arcade.View):
+    def on_show_view(self):
+        arcade.set_background_color(arcade.color.BLACK)
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_text("GAME OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Click to advance", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+                         arcade.color.GRAY, font_size=20, anchor_x="center")
+
+        arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        instructions_view = InstructionView()
+        self.window.show_view(instructions_view)
 
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "Different Views Example")
