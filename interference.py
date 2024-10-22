@@ -250,11 +250,61 @@ class Rows(list):
                 row[j].position = X_START + j * (CARD_WIDTH + X_GAP), Y_START + i * (CARD_HEIGHT + Y_GAP)
 
 
-class MyGame(arcade.Window):
+class MenuView(arcade.View):
+    def on_show_view(self):
+        arcade.set_background_color(arcade.color.WHITE)
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_text("Menu Screen", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Click to advance", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+                         arcade.color.GRAY, font_size=20, anchor_x="center")
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        instructions_view = InstructionView()
+        self.window.show_view(instructions_view)
+
+class GameOverView(arcade.View):
+    def on_show_view(self):
+        arcade.set_background_color(arcade.color.BLACK)
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_text("GAME OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Click to advance", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+                         arcade.color.GRAY, font_size=20, anchor_x="center")
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        instructions_view = InstructionView()
+        self.window.show_view(instructions_view)
+
+class InstructionView(arcade.View):
+    def __init__(self):
+        super().__init__()
+        self.text_box = None
+    
+    def on_show_view(self):
+        arcade.set_background_color(arcade.color.ORANGE_PEEL)
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_text("Instructions Screen", 20, SCREEN_HEIGHT - 35,
+                         arcade.color.BLACK, font_size=20, anchor_x="left")
+        arcade.draw_text("long_text", 20, SCREEN_HEIGHT - 75,
+                         arcade.color.GRAY, font_size=20, width = SCREEN_WIDTH-20, anchor_x="left", multiline=True)
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        game_view = GameView()
+        self.window.show_view(game_view)
+
+
+class GameView(arcade.View):
     """Main application class"""
 
     def __init__(self):
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        super().__init__()
 
         arcade.set_background_color(arcade.color.AMAZON)
 
@@ -474,8 +524,9 @@ class MyGame(arcade.Window):
 
 
 def main():
-    window = MyGame()
-    window.setup()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "Different Views Example")
+    menu_view = MenuView()
+    window.show_view(menu_view)
     arcade.run()
     #NineD = Card("9", "Diamonds")
     #print(NineD)
