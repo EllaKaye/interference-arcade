@@ -462,11 +462,16 @@ class GameView(arcade.View):
                     self.success = self.rows.all_ordered()
                     if self.success:
                         print("Game won!")
-                        self.round_message_text = "Success!"
+                        #self.round_message_text = "Success!"
+                        self.game_over = True
+                        game_over_view = GameOverView(True)  # Pass True for success
+                        self.window.show_view(game_over_view)
                     elif self.round == 3 and not self.success:
                         self.game_over = True
                         print("Game over")
-                        self.round_message_text = "Game over"
+                        #self.round_message_text = "Game over"
+                        game_over_view = GameOverView(False)  # Pass False when over without success
+                        self.window.show_view(game_over_view)
                     else:
                         print("Round over")
                         #self.round_message_text = "Round over"
@@ -561,17 +566,22 @@ class RoundOverView(arcade.View):
     def on_draw(self):
         self.clear()
         arcade.draw_text("ROUND OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("Press R to start new round", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
-                         arcade.color.GRAY, font_size=20, anchor_x="center")
+                        arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Click or press R to start new round", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+                        arcade.color.GRAY, font_size=20, anchor_x="center")
 
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
     def on_key_press(self, key, modifiers):
-        """Called whenever a key is pressed"""
-
-        # show instructions
         if key == arcade.key.R:
+            # Start new round in the existing game view
+            self.game_view.new_round()
+            # Switch back to the game view
+            self.window.show_view(self.game_view)
+            # Call on_show_view to reset the background color
+            self.game_view.on_show_view()
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
             # Start new round in the existing game view
             self.game_view.new_round()
             # Switch back to the game view
@@ -581,21 +591,44 @@ class RoundOverView(arcade.View):
 
 
 class GameOverView(arcade.View):
+    def __init__(self, success):
+        super().__init__()
+        self.success = success
+
     def on_show_view(self):
-        arcade.set_background_color(arcade.color.BLACK)
+        arcade.set_background_color(arcade.color.AMAZON if self.success else arcade.color.BLACK)
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("GAME OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("Click to advance", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
-                         arcade.color.GRAY, font_size=20, anchor_x="center")
+        message = "CONGRATULATIONS!" if self.success else "GAME OVER"
+        arcade.draw_text(message, 
+                        SCREEN_WIDTH / 2, 
+                        SCREEN_HEIGHT / 2,
+                        arcade.color.GOLD if self.success else arcade.color.WHITE, 
+                        font_size=50, 
+                        anchor_x="center")
+        
+        subtext = "You successfully ordered all the cards!" if self.success else "Better luck next time!"
+        arcade.draw_text(subtext,
+                        SCREEN_WIDTH / 2, 
+                        SCREEN_HEIGHT / 2 - 75,
+                        arcade.color.WHITE if self.success else arcade.color.GRAY, 
+                        font_size=20, 
+                        anchor_x="center")
+        
+        arcade.draw_text("Click or press ENTER to start a new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 150,
+                        arcade.color.GRAY, font_size=20, anchor_x="center")
 
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        instructions_view = InstructionView()
-        self.window.show_view(instructions_view)
+        game_view = GameView()
+        self.window.show_view(game_view)
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.ENTER:
+            game_view = GameView()
+            self.window.show_view(game_view)
 
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "Different Views Example")
