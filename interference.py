@@ -51,6 +51,9 @@ SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamon
 DEFAULT_LINE_HEIGHT = 45
 DEFAULT_FONT_SIZE = 20
 
+# Number of rounds
+ROUNDS = 3
+
 class Deck(arcade.SpriteList):
     "Deck spritelist. Will contain cards"
     
@@ -257,11 +260,11 @@ class MenuView(arcade.View):
     def on_draw(self):
         self.clear()
         arcade.draw_text("Interference", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=50, anchor_x="center")
+                        arcade.color.BLACK, font_size=50, anchor_x="center")
         arcade.draw_text("Press I for instructions", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
-                         arcade.color.GRAY, font_size=20, anchor_x="center")
+                        arcade.color.GRAY, font_size=20, anchor_x="center")
         arcade.draw_text("Click or press ENTER to start a new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 150,
-                         arcade.color.GRAY, font_size=20, anchor_x="center")
+                        arcade.color.GRAY, font_size=20, anchor_x="center")
 
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
@@ -346,7 +349,7 @@ class GameView(arcade.View):
         """Seup up game here. Call this function to restart"""
         # Game state
         self.round = 1
-        self.round_message_text = f"Round {self.round} of 3"
+        self.round_message_text = f"Round {self.round} of {ROUNDS}"
         self.game_over = False
 
         # deselect any selected cards
@@ -387,12 +390,12 @@ class GameView(arcade.View):
         start_x = X_MARGIN
         start_y = SCREEN_HEIGHT - DEFAULT_LINE_HEIGHT * 1.5
         self.round_message = arcade.Text(self.round_message_text,
-                          start_x,
-                          start_y,
-                          arcade.color.WHITE,
-                          font_size=DEFAULT_FONT_SIZE)
-                          #width=SCREEN_WIDTH,
-                          #align="left"
+                        start_x,
+                        start_y,
+                        arcade.color.WHITE,
+                        font_size=DEFAULT_FONT_SIZE)
+                        #width=SCREEN_WIDTH,
+                        #align="left"
         #self.round_message.scale = 0.5
 
         # check for (extremely unlikely case) that deal results in round over
@@ -466,7 +469,7 @@ class GameView(arcade.View):
                         self.game_over = True
                         game_over_view = GameOverView(True)  # Pass True for success
                         self.window.show_view(game_over_view)
-                    elif self.round == 3 and not self.success:
+                    elif self.round == ROUNDS and not self.success:
                         self.game_over = True
                         print("Game over")
                         #self.round_message_text = "Game over"
@@ -492,7 +495,7 @@ class GameView(arcade.View):
 
     def new_round(self):
 
-        if self.round == 3:
+        if self.round == ROUNDS:
             print("Out of rounds")
             return
 
@@ -505,7 +508,7 @@ class GameView(arcade.View):
         self.card_1 = self.blank = None
 
         # Update, then refresh, the round message
-        self.round_message_text = f"Round {self.round} of 3"
+        self.round_message_text = f"Round {self.round} of {ROUNDS}"
         self.round_message.text = self.round_message_text
 
         print(f"Round {self.round}")
@@ -616,8 +619,12 @@ class GameOverView(arcade.View):
                         font_size=20, 
                         anchor_x="center")
         
-        arcade.draw_text("Click or press ENTER to start a new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 150,
-                        arcade.color.GRAY, font_size=20, anchor_x="center")
+        arcade.draw_text("Click or press ENTER to start a new game", 
+                        SCREEN_WIDTH / 2, 
+                        SCREEN_HEIGHT / 2 - 150,
+                        arcade.color.WHITE if self.success else arcade.color.GRAY, 
+                        font_size=20, 
+                        anchor_x="center")
 
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
