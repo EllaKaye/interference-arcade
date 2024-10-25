@@ -496,6 +496,8 @@ class GameView(arcade.View):
     def new_round(self):
 
         if self.round == ROUNDS:
+            game_over_view = GameOverView(False)  # Pass False when over without success
+            self.window.show_view(game_over_view)
             print("Out of rounds")
             return
 
