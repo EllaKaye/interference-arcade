@@ -288,17 +288,45 @@ class MenuView(arcade.View):
 class InstructionView(arcade.View):
     def __init__(self):
         super().__init__()
-        self.text_box = None
+        #self.text_box = None
+        self.instructions = """
+- The aim is to arrange each row in ascending order, from 2 to King (followed by a space), one row per suit.
+
+- At the start, the deck is shuffled and dealt into four rows of thirteen cards, then the Aces are removed to create spaces.
+
+- Click on a card to select it, then click on a space to move it there, according to the following rules:
+
+    - If there's a space at the beginning of the row, any 2 can go there.
+
+    - Otherwise, you can only move a card into a space if it's the same suit and one rank higher than the card to the left of the space, e.g. only the 3S can be placed after the 2S, only the JH can be placed after 10H.
+
+    - Nothing can go after a King, or after a space.
+
+- The layout is blocked if there are no valid moves left, i.e. if all spaces are after Kings or other spaces.
+
+- When the layout is blocked, you can start a new round, up to three rounds. For a new round, all the cards that are not yet arranged by suit in ascending order at the start of a row are collected, shuffled, and then dealt out again to fill the rows, leaving one space in each row, after the ordered cards (or a space at the start of the row, if it doesn't yet start with a 2).
+
+- A new round can be triggered from the 'Round Over' screen, or at any time by pressing 'R'.
+
+- Because there are up to four valid moves at any time, this version of patience/solitaire requires skill. You have a better chance of success if you think strategically. What's the sequence of consequences of each valid move? What card would you like to be able to move, and what other cards need to move to make that possible?
+
+- The game ends when all rows are arranged in ascending order by suit, or when the third round is stuck.
+
+- A new game can be triggered at any time by pressing 'ENTER'.
+
+- Click or press 'ENTER' to continue
+        """
+
     
     def on_show_view(self):
-        arcade.set_background_color(arcade.color.ORANGE_PEEL)
+        arcade.set_background_color(arcade.color.WHITE)
 
     def on_draw(self):
         self.clear()
         arcade.draw_text("Instructions Screen", 20, SCREEN_HEIGHT - 35,
                         arcade.color.BLACK, font_size=20, anchor_x="left")
-        arcade.draw_text("long_text", 20, SCREEN_HEIGHT - 75,
-                        arcade.color.GRAY, font_size=20, width = SCREEN_WIDTH-20, anchor_x="left", multiline=True)
+        arcade.draw_text(self.instructions, 20, SCREEN_HEIGHT - 75,
+                        arcade.color.BLACK, font_size=14, width = SCREEN_WIDTH-20, anchor_x="left", multiline=True)
 
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
