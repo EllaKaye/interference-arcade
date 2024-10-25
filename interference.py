@@ -2,7 +2,7 @@ import arcade
 import random
 
 """
-I use the follow 'magic' numbers throught:
+I use the follow 'magic' numbers throughout:
 4: number of suits, number of rows
 13: number of cards in a suit, number of cards in a row
 These numbers are well understood in the context of a deck of cards,
@@ -44,7 +44,7 @@ CARD_VALUES = ["Blank", "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", 
 VALUES_INT = {value: index for index, value in enumerate(CARD_VALUES)} # allows us to check for consecutive values
 #VALUES_INT["Blank"] = 0
 CARD_SUITS = ["Clubs", "Hearts", "Spades", "Diamonds"]
-# Not needed for game, but makes printing for debigging nicer
+# Not needed for game, but makes printing for debugging nicer
 SUIT_ICONS = {"Spades": "♠️", "Clubs": "♣️", "Hearts": "♥️", "Diamonds": "♦️"}
 
 # For text
@@ -91,7 +91,7 @@ class Card(arcade.Sprite):
         super().__init__(self.image_file_name, scale, hit_box_algorithm="None")
 
     def set_visibility(self):
-        """Set visibility for the card. Needs to be called after card initialised in setup"""
+        """Set visibility for the card. Needs to be called after card initialized in setup"""
         if self.value in ["A", "Blank"]:
             self.visible = False
 
@@ -384,7 +384,7 @@ class GameView(arcade.View):
         self.setup()
 
     def setup(self):
-        """Seup up game here. Call this function to restart"""
+        """Setup up game here. Call this function to restart"""
         # Game state
         self.round = 1
         self.round_message_text = f"Round {self.round} of {ROUNDS}"
@@ -454,7 +454,7 @@ class GameView(arcade.View):
 
         # manually reset viewport
         # this is necessary to overcome a weird effect where drawing the text 
-        # causes an annimation effect that makes all the drawing shrink towards the bottom left corner
+        # causes an animation effect that makes all the drawing shrink towards the bottom left corner
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
         for row in self.rows:
