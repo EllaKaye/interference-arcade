@@ -1,7 +1,5 @@
 # Interference 
 
-**Note: This README is under-development.**
-
 #### Video demo: URL (when recorded and uploaded!)
 
 ## About the game and name
