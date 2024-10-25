@@ -261,9 +261,9 @@ class MenuView(arcade.View):
         self.clear()
         arcade.draw_text("Interference", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
                         arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("Press I for instructions", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+        arcade.draw_text("Press 'I' for instructions", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
                         arcade.color.GRAY, font_size=20, anchor_x="center")
-        arcade.draw_text("Click or press ENTER to start a new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 150,
+        arcade.draw_text("Click or press 'ENTER' to start a new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 150,
                         arcade.color.GRAY, font_size=20, anchor_x="center")
 
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
@@ -273,7 +273,7 @@ class MenuView(arcade.View):
 
         # show instructions
         if key == arcade.key.I:
-            instructions_view = InstructionView()
+            instructions_view = InstructionView(self)
             self.window.show_view(instructions_view)
 
         # start a new game
@@ -286,9 +286,9 @@ class MenuView(arcade.View):
         self.window.show_view(game_view)
 
 class InstructionView(arcade.View):
-    def __init__(self):
+    def __init__(self, previous_view):
         super().__init__()
-        #self.text_box = None
+        self.previous_view = previous_view
         self.instructions = """
 - The aim is to arrange each row in ascending order, from 2 to King (followed by a space), one row per suit.
 
@@ -312,9 +312,11 @@ class InstructionView(arcade.View):
 
 - The game ends when all rows are arranged in ascending order by suit, or when the third round is stuck.
 
-- A new game can be triggered at any time by pressing 'ENTER'.
+- Toggle these instructions at any time by pressing 'I' (i.e. to return to the game if you were in the middle of one).
 
-- Click or press 'ENTER' to continue
+- Click to return to previous screen.
+
+- A new game can be triggered at any time (including now!) by pressing 'ENTER'.
         """
 
     
@@ -323,10 +325,10 @@ class InstructionView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Instructions Screen", 20, SCREEN_HEIGHT - 35,
+        arcade.draw_text("Instructions", 20, SCREEN_HEIGHT - 35,
                         arcade.color.BLACK, font_size=20, anchor_x="left")
         arcade.draw_text(self.instructions, 20, SCREEN_HEIGHT - 75,
-                        arcade.color.BLACK, font_size=14, width = SCREEN_WIDTH-20, anchor_x="left", multiline=True)
+                        arcade.color.BLACK, font_size=13, width = SCREEN_WIDTH-30, anchor_x="left", multiline=True)
 
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
@@ -334,13 +336,21 @@ class InstructionView(arcade.View):
         """Called whenever a key is pressed"""
 
         # start a new game
-        if key == arcade.key.ENTER:
+        if key == arcade.key.I:
+            # Return to previous view
+            self.window.show_view(self.previous_view)
+            # Reset the background colour to previous view
+            self.previous_view.on_show_view()
+        elif key == arcade.key.ENTER:
+            # Start new game
             game_view = GameView()
             self.window.show_view(game_view)
 
+
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        game_view = GameView()
-        self.window.show_view(game_view)
+        # Return to previous view
+        self.window.show_view(self.previous_view)
+        self.previous_view.on_show_view()
 
 
 class GameView(arcade.View):
@@ -567,19 +577,15 @@ class GameView(arcade.View):
         self.rows.assign_positions()
         
     def on_key_press(self, key, modifiers):
-        """Called whenever a key is pressed"""
-        
         # start a new round
         if key == arcade.key.R:
             self.new_round()
-
         # start a new game
-        if key == arcade.key.ENTER:
+        elif key == arcade.key.ENTER:
             self.setup()
-
         # show instructions
-        if key == arcade.key.I:
-            instructions_view = InstructionView()
+        elif key == arcade.key.I:
+            instructions_view = InstructionView(self)
             self.window.show_view(instructions_view)
 
     def show_round_over(self):
@@ -600,7 +606,7 @@ class RoundOverView(arcade.View):
         self.clear()
         arcade.draw_text("ROUND OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
                         arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("Click or press R to start new round", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+        arcade.draw_text("Click or press 'R' to start new round", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
                         arcade.color.GRAY, font_size=20, anchor_x="center")
 
         arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
@@ -613,6 +619,9 @@ class RoundOverView(arcade.View):
             self.window.show_view(self.game_view)
             # Call on_show_view to reset the background color
             self.game_view.on_show_view()
+        elif key == arcade.key.I:
+            instructions_view = InstructionView(self)
+            self.window.show_view(instructions_view)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
             # Start new round in the existing game view
@@ -649,7 +658,7 @@ class GameOverView(arcade.View):
                         font_size=20, 
                         anchor_x="center")
         
-        arcade.draw_text("Click or press ENTER to start a new game", 
+        arcade.draw_text("Click or press 'ENTER' to start a new game", 
                         SCREEN_WIDTH / 2, 
                         SCREEN_HEIGHT / 2 - 150,
                         arcade.color.WHITE if self.success else arcade.color.GRAY, 
@@ -666,6 +675,9 @@ class GameOverView(arcade.View):
         if key == arcade.key.ENTER:
             game_view = GameView()
             self.window.show_view(game_view)
+        elif key == arcade.key.I:
+            instructions_view = InstructionView(self)
+            self.window.show_view(instructions_view)
 
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "Different Views Example")
