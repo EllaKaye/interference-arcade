@@ -1,6 +1,7 @@
 # Interference 
 
 #### Video demo: URL (when recorded and uploaded!)
+#### Description: A solitaire card game in Python
 
 ## About the game and name
 
@@ -80,7 +81,7 @@ I've used LLMs in accordance with their policy:
 My main focus has been bringing the Python code I'd written 13 years earlier for v1 up-to-date. I didn't want an LLM to write any of the game code for me.
 They were invaluable in other ways though. I used ChatGPT to ask about the most Pythonic way of achieving particular goals (providing it with the minimum context/example to get a useful response), and in doing so developed a much greater understanding of Python features like list comprehension and effective use of classes. I also used ChatGPT to help debug error messages, and for questions about the Arcade library. 
 
-As I continued to work on the game, I started to prefer Claude.ai over ChatGPT, especially for code. In particular, I used it to help with creating the different views for the game (i.e. the menu, instructions, round over and game over screens, in addition to the game itself), and how to switch between them, maintaining game state.
+As I continued to work on the game, I started to prefer Claude.ai over ChatGPT, especially for code. In particular, I asked it for help with creating the different views for the game (i.e. the menu, instructions, round over and game over screens, in addition to the game itself), and how to switch between them, maintaining game state.
 
 ## About next steps
 
@@ -89,14 +90,14 @@ and I'm satisfied enough with it to submit it for my CS50 final project,
 I haven't between particularly happy with the Python Arcade library.
 I don't love the look of the game, particularly the text rendering.
 I don't like that you can't responsively resize the window, 
-nor that it is only playable on computer.
+nor that it is only playable on a computer.
 
 For all these reasons, in retrospect, 
 I wish I'd implemented a web browser-based version of Interference.
 I've already made [good progress towards such a version](https://github.com/EllaKaye/interference), using [Shiny for Python](https://shiny.posit.co/py/) 
 and I prefer it in every respect to this one. 
 However, for a variety of reasons too tedious to go into here, 
-I don't think I'll finish that implementation in 2024 
+I won't get round to finishing that implementation in 2024 
 and it felt important to me to complete and submit the Arcade version this year.
 
 ## About me
