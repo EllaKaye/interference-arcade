@@ -290,9 +290,9 @@ class InstructionView(arcade.View):
         super().__init__()
         self.previous_view = previous_view
         self.instructions = """
-- The aim is to arrange each row in ascending order, from 2 to King (followed by a space), one row per suit.
+- At the start, a deck of playing cards is shuffled and dealt into four rows of thirteen cards each, then the Aces are removed to create spaces.
 
-- At the start, the deck is shuffled and dealt into four rows of thirteen cards, then the Aces are removed to create spaces.
+- The aim is to arrange each row in ascending order, from 2 to King (followed by a space), one row per suit.
 
 - Click on a card to select it, then click on a space to move it there, according to the following rules:
 
